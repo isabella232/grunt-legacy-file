@@ -7,12 +7,9 @@
 
 'use strict';
 
+require('should');
 var fs = require('fs');
 var path = require('path');
-var assert = require('assert');
-var should = require('should');
-var grunt = require('grunt');
-var Tempfile = require('temporary/lib/file');
 var Tempdir = require('temporary/lib/dir');
 var tempdir = new Tempdir();
 var file = require('..');
@@ -101,25 +98,25 @@ describe('exclusion:', function () {
 
   it('solitary exclusion should match nothing', function() {
     file.expand(['!js/*.js']).should.eql([]);
-  })
+  });
   it('exclusion should cancel match', function() {
     file.expand(['js/bar.js', '!js/bar.js']).should.eql([]);
-  })
+  });
   it('should omit single file from matched set', function() {
     file.expand(['**/*.js', '!js/foo.js']).should.eql(['js/bar.js']);
-  })
+  });
   it('inclusion / exclusion order matters', function() {
     file.expand(['!js/foo.js', '**/*.js']).should.eql(['js/bar.js', 'js/foo.js']);
-  })
+  });
   it('multiple exclusions should be removed from the set', function() {
     file.expand(['**/*.js', '**/*.css', '!js/bar.js', '!css/baz.css']).should.eql(['js/foo.js', 'css/qux.css']);
-  })
+  });
   it('excluded wildcards should be removed from the matched set', function() {
     file.expand(['**/*.js', '**/*.css', '!**/*.css']).should.eql(['js/bar.js', 'js/foo.js']);
-  })
+  });
   it('different pattern for exclusion should still work', function() {
     file.expand(['js/bar.js', 'js/foo.js', 'css/baz.css', 'css/qux.css', '!**/b*.*']).should.eql(['js/foo.js', 'css/qux.css']);
-  })
+  });
   it('should respect the order of inclusion / exclusion:', function () {
     file.expand(['js/bar.js', '!**/b*.*', 'js/foo.js', 'css/baz.css', 'css/qux.css']).should.eql(['js/foo.js', 'css/baz.css', 'css/qux.css']);
   });
