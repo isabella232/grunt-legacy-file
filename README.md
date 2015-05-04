@@ -2,6 +2,10 @@
 
 > Grunt's file methods.
 
+## Heads up!
+
+This is not ready for use yet! We'll updated the readme when it's ready to go, feel free to star the project if you want updates in the meantime!
+
 ## Install
 
 Install with [npm](https://www.npmjs.com/)
