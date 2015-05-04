@@ -1,4 +1,4 @@
-/*
+/*!
  * grunt-legacy-file <http://gruntjs.com/grunt-legacy-file>
  *
  * Copyright (c) 2015, "Cowboy" Ben Alman.

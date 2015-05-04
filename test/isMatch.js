@@ -1,4 +1,4 @@
-/*
+/*!
  * grunt-legacy-file <http://gruntjs.com/grunt-legacy-file>
  *
  * Copyright (c) 2015, "Cowboy" Ben Alman.
@@ -7,10 +7,7 @@
 
 'use strict';
 
-var fs = require('fs');
-var path = require('path');
-var assert = require('assert');
-var should = require('should');
+require('should');
 var file = require('..');
 
 describe('file.isMatch():', function () {
