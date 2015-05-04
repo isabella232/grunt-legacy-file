@@ -1,4 +1,4 @@
-/*
+/*!
  * grunt-legacy-file <http://gruntjs.com/grunt-legacy-file>
  *
  * Copyright (c) 2015, "Cowboy" Ben Alman.
@@ -23,40 +23,37 @@ fs.symlinkSync(path.resolve('test/fixtures/octocat.png'), path.join(tempdir.path
 fs.symlinkSync(path.resolve('test/fixtures/expand'), path.join(tempdir.path, 'expand'), 'dir');
 
 describe('file.expandMapping():', function () {
-  beforeEach(function () {
+  var actual, expected;
+
+  beforeEach(function (done) {
     this.cwd = process.cwd();
     process.chdir('test/fixtures');
     done();
   });
-  afterEach(function () {
+  afterEach(function (done) {
     process.chdir(this.cwd);
     done();
   });
 
-  describe('basic matching:', function () {
-    it('destBase should behave the same both with or without trailing slash:', function () {
-      var actual = file.expandMapping(['expand/**/*.txt'], 'dest');
-      var expected = [{
-        dest: 'dest/expand/deep/deep.txt',
-        src: ['expand/deep/deep.txt']
-      }, {
-        dest: 'dest/expand/deep/deeper/deeper.txt',
-        src: ['expand/deep/deeper/deeper.txt']
-      }, {
-        dest: 'dest/expand/deep/deeper/deepest/deepest.txt',
-        src: ['expand/deep/deeper/deepest/deepest.txt']
-      }, ];
-      actual.should.eql(expect); // 'basic src-dest options'
+  describe('trailing slash handling:', function () {
+    var expected = [{
+      dest: 'dest/expand/deep/deep.txt',
+      src: ['expand/deep/deep.txt']
+    }, {
+      dest: 'dest/expand/deep/deeper/deeper.txt',
+      src: ['expand/deep/deeper/deeper.txt']
+    }, {
+      dest: 'dest/expand/deep/deeper/deepest/deepest.txt',
+      src: ['expand/deep/deeper/deepest/deepest.txt']
+    }, ];
 
-      actual = file.expandMapping(['expand/**/*.txt'], 'dest/');
-      actual.should.eql(expected);
+    it('`destBase` should behave the same both with or without trailing slash:', function () {
+      file.expandMapping(['expand/**/*.txt'], 'dest').should.eql(expected); 
+      file.expandMapping(['expand/**/*.txt'], 'dest/').should.eql(expected);
     });
   });
 
-  it('.flatten():', function () {
-    var actual = file.expandMapping(['expand/**/*.txt'], 'dest', {
-      flatten: true
-    });
+  describe('options.flatten:', function () {
     var expected = [{
       dest: 'dest/deep.txt',
       src: ['expand/deep/deep.txt']
@@ -67,53 +64,54 @@ describe('file.expandMapping():', function () {
       dest: 'dest/deepest.txt',
       src: ['expand/deep/deeper/deepest/deepest.txt']
     }, ];
-    actual.should.eql(expect); // 'dest paths should be flattened pre-destBase+destPath join'
 
+    it('dest paths should be flattened pre-destBase+destPath join', function () {
+      file.expandMapping(['expand/**/*.txt'], 'dest', {flatten: true}).should.eql(expected);
+    });
   });
-  it('.ext():', function () {
-    var actual, expected;
-    actual = file.expandMapping(['expand/**/*.txt'], 'dest', {
-      ext: '.foo'
+
+  describe('options.ext:', function () {
+    it('should add the specified extension:', function () {
+      expected = [{
+        dest: 'dest/expand/deep/deep.foo',
+        src: ['expand/deep/deep.txt']
+      }, {
+        dest: 'dest/expand/deep/deeper/deeper.foo',
+        src: ['expand/deep/deeper/deeper.txt']
+      }, {
+        dest: 'dest/expand/deep/deeper/deepest/deepest.foo',
+        src: ['expand/deep/deeper/deepest/deepest.txt']
+      }, ];
+      file.expandMapping(['expand/**/*.txt'], 'dest', {ext: '.foo'}).should.eql(expected); 
     });
-    expected = [{
-      dest: 'dest/expand/deep/deep.foo',
-      src: ['expand/deep/deep.txt']
-    }, {
-      dest: 'dest/expand/deep/deeper/deeper.foo',
-      src: ['expand/deep/deeper/deeper.txt']
-    }, {
-      dest: 'dest/expand/deep/deeper/deepest/deepest.foo',
-      src: ['expand/deep/deeper/deepest/deepest.txt']
-    }, ];
-    actual.should.eql(expect); // 'specified extension should be added'
-    actual = file.expandMapping(['expand-mapping-ext/**/file*'], 'dest', {
-      ext: '.foo'
+
+    it('should add the specified extension:', function () {
+      expected = [{
+        dest: 'dest/expand-mapping-ext/dir.ectory/file-no-extension.foo',
+        src: ['expand-mapping-ext/dir.ectory/file-no-extension']
+      }, {
+        dest: 'dest/expand-mapping-ext/dir.ectory/sub.dir.ectory/file.foo',
+        src: ['expand-mapping-ext/dir.ectory/sub.dir.ectory/file.ext.ension']
+      }, {
+        dest: 'dest/expand-mapping-ext/file.foo',
+        src: ['expand-mapping-ext/file.ext.ension']
+      }, ];
+      file.expandMapping(['expand-mapping-ext/**/file*'], 'dest', {ext: '.foo'}).should.eql(expected); 
     });
-    expected = [{
-      dest: 'dest/expand-mapping-ext/dir.ectory/file-no-extension.foo',
-      src: ['expand-mapping-ext/dir.ectory/file-no-extension']
-    }, {
-      dest: 'dest/expand-mapping-ext/dir.ectory/sub.dir.ectory/file.foo',
-      src: ['expand-mapping-ext/dir.ectory/sub.dir.ectory/file.ext.ension']
-    }, {
-      dest: 'dest/expand-mapping-ext/file.foo',
-      src: ['expand-mapping-ext/file.ext.ension']
-    }, ];
-    actual.should.eql(expect); // 'specified extension should be added'
-    actual = file.expandMapping(['expand/**/*.txt'], 'dest', {
-      ext: ''
+
+    it('empty string extension should be added', function () {
+      expected = [{
+        dest: 'dest/expand/deep/deep',
+        src: ['expand/deep/deep.txt']
+      }, {
+        dest: 'dest/expand/deep/deeper/deeper',
+        src: ['expand/deep/deeper/deeper.txt']
+      }, {
+        dest: 'dest/expand/deep/deeper/deepest/deepest',
+        src: ['expand/deep/deeper/deepest/deepest.txt']
+      }, ];
+      file.expandMapping(['expand/**/*.txt'], 'dest', {ext: ''}).should.eql(expected);
     });
-    expected = [{
-      dest: 'dest/expand/deep/deep',
-      src: ['expand/deep/deep.txt']
-    }, {
-      dest: 'dest/expand/deep/deeper/deeper',
-      src: ['expand/deep/deeper/deeper.txt']
-    }, {
-      dest: 'dest/expand/deep/deeper/deepest/deepest',
-      src: ['expand/deep/deeper/deepest/deepest.txt']
-    }, ];
-    actual.should.eql(expect); // 'empty string extension should be added'
   });
 
   it('.extDot():', function () {
@@ -133,7 +131,7 @@ describe('file.expandMapping():', function () {
       dest: 'dest/expand-mapping-ext/file.foo',
       src: ['expand-mapping-ext/file.ext.ension']
     }, ];
-    actual.should.eql(expect); // 'extDot of `first` should replace everything after the first dot in the filename.'
+    actual.should.eql(expected); // 'extDot of `first` should replace everything after the first dot in the filename.'
 
     actual = file.expandMapping(['expand-mapping-ext/**/file*'], 'dest', {
       ext: '.foo',
@@ -149,7 +147,7 @@ describe('file.expandMapping():', function () {
       dest: 'dest/expand-mapping-ext/file.ext.foo',
       src: ['expand-mapping-ext/file.ext.ension']
     }, ];
-    actual.should.eql(expect); // 'extDot of `last` should replace everything after the last dot in the filename.'
+    actual.should.eql(expected); // 'extDot of `last` should replace everything after the last dot in the filename.'
 
 
   });
@@ -167,7 +165,7 @@ describe('file.expandMapping():', function () {
       dest: 'dest/deep/deeper/deepest/deepest.txt',
       src: ['expand/deep/deeper/deepest/deepest.txt']
     }, ];
-    actual.should.eql(expect); // 'cwd should be stripped from front of destPath, pre-destBase+destPath join'
+    actual.should.eql(expected); // 'cwd should be stripped from front of destPath, pre-destBase+destPath join'
 
   });
   it('.rename():', function () {
@@ -190,7 +188,7 @@ describe('file.expandMapping():', function () {
       src: ['expand/deep/deeper/deepest/deepest.txt']
     }, ];
 
-    actual.should.eql(expect); // 'custom rename function should be used to build dest, post-flatten'
+    actual.should.eql(expected); // 'custom rename function should be used to build dest, post-flatten'
   });
   it('rename to same dest:', function () {
     var actual = file.expandMapping(['**/*'], 'dest', {
@@ -215,7 +213,7 @@ describe('file.expandMapping():', function () {
       src: ['expand/js/bar.js', 'expand/js/foo.js']
     }];
 
-    actual.should.eql(expect); // 'if dest is same for multiple src, create an array of src'
+    actual.should.eql(expected); // 'if dest is same for multiple src, create an array of src'
     });
   })
 
@@ -240,7 +238,7 @@ describe('file.expandMapping():', function () {
     return compareBuffers(fs.readFileSync(filepath1), fs.readFileSync(filepath2));
   };
 
-  describe('.file():', function () {
+  describe('file():', function () {
     beforeEach(function () {
       this.defaultEncoding = file.defaultEncoding;
       file.defaultEncoding = 'utf8';
@@ -588,7 +586,7 @@ describe('file.expandMapping():', function () {
     file.recurse(rootdir, function (abspath, rootdir, subdir, filename) {
       actual[abspath] = [rootdir, subdir, filename];
     });
-    actual.should.eql(expect); // 'paths and arguments should match.'
+    actual.should.eql(expected); // 'paths and arguments should match.'
   });
 
   it('.exists():', function () {
