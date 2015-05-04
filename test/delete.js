@@ -1,4 +1,4 @@
-/*
+/*!
  * grunt-legacy-file <http://gruntjs.com/grunt-legacy-file>
  *
  * Copyright (c) 2015, "Cowboy" Ben Alman.
@@ -8,95 +8,161 @@
 'use strict';
 
 /* deps: mocha temporary */
+require('should');
 var fs = require('fs');
 var path = require('path');
-var assert = require('assert');
-var should = require('should');
-
-var file = require('../');
-var grunt = require('./support/grunt');
-var Tempfile = require('temporary/lib/file');
+var grunt = require('grunt');
 var Tempdir = require('temporary/lib/dir');
 var tempdir = new Tempdir();
+var file = require('..');
 
 fs.symlinkSync(path.resolve('test/fixtures/octocat.png'), path.join(tempdir.path, 'octocat.png'), 'file');
 fs.symlinkSync(path.resolve('test/fixtures/expand'), path.join(tempdir.path, 'expand'), 'dir');
 
-describe('.file.match():', function () {
-  it('.delete():', function () {
-    
-    var oldBase = process.cwd();
-    var cwd = path.resolve(tempdir.path, 'delete', 'folder');
-    file.mkdir(cwd);
-    file.setBase(tempdir.path);
+describe('file.delete():', function () {
+  var original, cwd;
+  
+  before(function(cb) {
+    this.writeOption = grunt.option('write');
 
-    file.write(path.join(cwd, 'test.js'), 'var test;');
-    test.ok(file.delete(cwd), 'should return true after deleting file.');
-    test.equal(file.exists(cwd), false, 'file should have been deleted.');
-    file.setBase(oldBase);
+    // Testing that warnings were displayed.
+    this.oldFailWarnFn = grunt.fail.warn;
+    this.oldLogWarnFn = grunt.log.warn;
+    this.resetWarnCount = function() {
+      this.warnCount = 0;
+    }.bind(this);
 
+    grunt.fail.warn = grunt.log.warn = function() {
+      this.warnCount += 1;
+    }.bind(this);
+    cb();
   });
 
-  it('delete nonexistent file:', function () {
-    
-    this.resetWarnCount();
-    test.ok(!file.delete('nonexistent'), 'should return false if file does not exist.');
-    test.ok(this.warnCount, 'should issue a warning when deleting non-existent file');
+  after(function(done) {
+    file.defaultEncoding = this.defaultEncoding;
+    grunt.option('write', this.writeOption);
 
+    grunt.fail.warn = this.oldFailWarnFn;
+    grunt.log.warn = this.oldLogWarnFn;
+    done();
   });
-  it('delete outside working directory:', function () {
-    
-    var oldBase = process.cwd();
-    var cwd = path.resolve(tempdir.path, 'delete', 'folder');
-    var outsidecwd = path.resolve(tempdir.path, 'delete', 'outsidecwd');
-    file.mkdir(cwd);
-    file.mkdir(outsidecwd);
-    file.setBase(cwd);
 
-    file.write(path.join(outsidecwd, 'test.js'), 'var test;');
-
-    this.resetWarnCount();
-    test.equal(file.delete(path.join(outsidecwd, 'test.js')), false, 'should not delete anything outside the cwd.');
-    test.ok(this.warnCount, 'should issue a warning when deleting outside working directory');
-
-    test.ok(file.delete(path.join(outsidecwd), {
-      force: true
-    }), 'should delete outside cwd when using the --force.');
-    test.equal(file.exists(outsidecwd), false, 'file outside cwd should have been deleted when using the --force.');
-
-    file.setBase(oldBase);
-
+  before(function () {
+    original = process.cwd();
+    cwd = path.resolve(tempdir.path, 'delete', 'folder');
   });
-  it('dont delete current working directory:', function () {
-    
-    var oldBase = process.cwd();
-    var cwd = path.resolve(tempdir.path, 'dontdelete', 'folder');
-    file.mkdir(cwd);
-    file.setBase(cwd);
-
-    this.resetWarnCount();
-    test.equal(file.delete(cwd), false, 'should not delete the cwd.');
-    test.ok(this.warnCount, 'should issue a warning when trying to delete cwd');
-
-    test.ok(file.exists(cwd), 'the cwd should exist.');
-
-    file.setBase(oldBase);
-
+  after(function () {
+    file.setBase(original);
   });
-  it('dont actually delete with no-write option on:', function () {
+
+  describe('basic delete operations:', function () {
+    it('.delete():', function () {
+      file.mkdir(cwd);
+      file.setBase(tempdir.path);
+      file.write(path.join(cwd, 'test.js'), 'var test;');
+    });
+
+    it('should return true after deleting file.', function () {
+      file.delete(cwd).should.be.ok;
+    });
     
-    grunt.option('write', false);
+    it('file should have been deleted.', function () {
+      file.exists(cwd).should.not.be.ok;
+    });
 
-    var oldBase = process.cwd();
-    var cwd = path.resolve(tempdir.path, 'dontdelete', 'folder');
-    file.mkdir(cwd);
-    file.setBase(tempdir.path);
+    it('should return false when attempting to delete a nonexistent file.', function () {
+      file.delete('nonexistent').should.not.be.ok;
+    });
 
-    file.write(path.join(cwd, 'test.js'), 'var test;');
-    test.ok(file.delete(cwd), 'should return true after not actually deleting file.');
-    test.equal(file.exists(cwd), true, 'file should NOT be deleted if --no-write was specified.');
-    file.setBase(oldBase);
+    it('should issue a warning when attempting to delete a nonexistent file', function () {
+      this.resetWarnCount();
+      file.delete('nonexistent').should.not.be.ok;
+      this.warnCount.should.be.ok;
+    });
+  });
 
 
+  describe('current working directory:', function () {
+    var outsidecwd;
+
+    beforeEach(function () {
+      outsidecwd = path.resolve(tempdir.path, 'delete', 'outsidecwd');
+      file.mkdir(cwd);
+      file.mkdir(outsidecwd);
+      file.setBase(cwd);
+
+      file.write(path.join(outsidecwd, 'test.js'), 'var test;');
+      this.resetWarnCount();
+    });
+    afterEach(function () {
+      file.setBase(original);
+    });
+
+    it('should not delete anything outside the cwd by default:', function () {
+      file.delete(path.join(outsidecwd, 'test.js')).should.not.be.ok;
+    });
+
+    it('should issue a warning when deleting outside the cwd:', function () {
+      file.delete(path.join(outsidecwd, 'test.js')).should.not.be.ok;
+      this.warnCount.should.equal(1);
+    });
+
+    it('should delete outside cwd when using the --force:', function () {
+      file.delete(path.join(outsidecwd), {force: true }).should.be.ok;
+    });
+
+    it('file outside cwd should have been deleted when using the --force:', function () {
+      file.delete(path.join(outsidecwd), {force: true });
+      file.exists(outsidecwd).should.be.false;
+    });
+  });
+
+  describe('prevent accidental deletion of actual cwd:', function () {
+    beforeEach(function () {
+      cwd = path.resolve(tempdir.path, 'dontdelete', 'folder');
+      file.mkdir(cwd);
+      file.setBase(cwd);
+    });
+    afterEach(function () {
+      file.setBase(original);
+    });
+
+    it('should not delete the cwd:', function () {
+      this.resetWarnCount();
+      file.delete(cwd).should.not.be.ok;
+    });
+
+    it('should issue a warning when trying to delete cwd:', function () {
+      this.resetWarnCount();
+      file.delete(cwd);
+      this.warnCount.should.equal(1);
+    });
+
+    it('the cwd should exist after trying to delete it:', function () {
+      file.delete(cwd);
+      file.exists(cwd).should.be.true;
+    });
+  });
+
+  describe('options.nowrite', function () {
+    beforeEach(function () {
+      cwd = path.resolve(tempdir.path, 'dontdelete', 'folder');
+      file.mkdir(cwd);
+      file.setBase(tempdir.path);
+      file.write(path.join(cwd, 'test.js'), 'var test;');
+      grunt.option('write', false);
+    });
+    afterEach(function () {
+      file.setBase(original);
+    });
+
+    it('should not delete when the `nowrite` option is enabled (but still return `true`):', function () {
+      file.delete(cwd).should.be.true;
+    });
+
+    it('file should still exist if `--no-write` was specified.', function () {
+      file.delete(cwd);
+      file.exists(cwd).should.be.true;
+    });
   });
 });
