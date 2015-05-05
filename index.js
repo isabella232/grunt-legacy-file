@@ -121,7 +121,7 @@ file.expand = function() {
           // If the file is of the right type and exists, this should work.
           return fs.statSync(filepath)[options.filter]();
         }
-      } catch(e) {
+      } catch (e) {
         // Otherwise, it's probably not the right type.
         return false;
       }
@@ -197,7 +197,7 @@ file.mkdir = function(dirpath, mode) {
     if (!file.exists(subpath)) {
       try {
         fs.mkdirSync(subpath, mode);
-      } catch(e) {
+      } catch (e) {
         throw grunt.util.error('Unable to create directory "' + subpath + '" (Error code: ' + e.code + ').', e);
       }
     }
@@ -241,7 +241,7 @@ file.read = function(filepath, options) {
     }
     grunt.verbose.ok();
     return contents;
-  } catch(e) {
+  } catch (e) {
     grunt.verbose.error();
     throw grunt.util.error('Unable to read "' + filepath + '" file (Error code: ' + e.code + ').', e);
   }
@@ -256,7 +256,7 @@ file.readJSON = function(filepath, options) {
     result = JSON.parse(src);
     grunt.verbose.ok();
     return result;
-  } catch(e) {
+  } catch (e) {
     grunt.verbose.error();
     throw grunt.util.error('Unable to parse "' + filepath + '" file (' + e.message + ').', e);
   }
@@ -271,7 +271,7 @@ file.readYAML = function(filepath, options) {
     result = YAML.load(src);
     grunt.verbose.ok();
     return result;
-  } catch(e) {
+  } catch (e) {
     grunt.verbose.error();
     throw grunt.util.error('Unable to parse "' + filepath + '" file (' + e.problem + ').', e);
   }
@@ -296,14 +296,32 @@ file.write = function(filepath, contents, options) {
     }
     grunt.verbose.ok();
     return true;
-  } catch(e) {
+  } catch (e) {
     grunt.verbose.error();
     throw grunt.util.error('Unable to write "' + filepath + '" file (Error code: ' + e.code + ').', e);
   }
 };
 
 // Read a file, optionally processing its content, then write the output.
-file.copy = function(srcpath, destpath, options) {
+// Or read a directory, recursively creating directories, reading files,
+// processing content, writing output.
+file.copy = function copy(srcpath, destpath, options) {
+  if (file.isDir(srcpath)) {
+    // Copy a directory, recursively.
+    // Explicitly create new dest directory.
+    file.mkdir(destpath);
+    // Iterate over all sub-files/dirs, recursing.
+    fs.readdirSync(srcpath).forEach(function(filepath) {
+      copy(path.join(srcpath, filepath), path.join(destpath, filepath), options);
+    });
+  } else {
+    // Copy a single file.
+    file._copy(srcpath, destpath, options);
+  }
+};
+
+// Read a file, optionally processing its content, then write the output.
+file._copy = function(srcpath, destpath, options) {
   if (!options) { options = {}; }
   // If a process function was specified, and noProcess isn't true or doesn't
   // match the srcpath, process the file's source.
@@ -317,9 +335,9 @@ file.copy = function(srcpath, destpath, options) {
   if (process) {
     grunt.verbose.write('Processing source...');
     try {
-      contents = options.process(contents, srcpath);
+      contents = options.process(contents, srcpath, destpath);
       grunt.verbose.ok();
-    } catch(e) {
+    } catch (e) {
       grunt.verbose.error();
       throw grunt.util.error('Error while processing "' + srcpath + '" file.', e);
     }
@@ -369,7 +387,7 @@ file.delete = function(filepath, options) {
     }
     grunt.verbose.ok();
     return true;
-  } catch(e) {
+  } catch (e) {
     grunt.verbose.error();
     throw grunt.util.error('Unable to delete "' + filepath + '" file (' + e.message + ').', e);
   }
@@ -431,7 +449,7 @@ file.isPathCwd = function() {
   var filepath = path.join.apply(path, arguments);
   try {
     return file.arePathsEquivalent(fs.realpathSync(process.cwd()), fs.realpathSync(filepath));
-  } catch(e) {
+  } catch (e) {
     return false;
   }
 };
@@ -441,7 +459,7 @@ file.isPathInCwd = function() {
   var filepath = path.join.apply(path, arguments);
   try {
     return file.doesPathContain(fs.realpathSync(process.cwd()), fs.realpathSync(filepath));
-  } catch(e) {
+  } catch (e) {
     return false;
   }
 };
