@@ -16,7 +16,7 @@ var grunt = require('grunt');
 var file = require('..');
 var utils = require('./utils');
 
-describe('file.isMatch():', function () {
+describe('file.copy():', function () {
   it('.copy():', function () {
     var tmpfile;
     tmpfile = new Tempfile();

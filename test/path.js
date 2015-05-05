@@ -17,7 +17,7 @@ var file = require('..');
 fs.symlinkSync(path.resolve('test/fixtures/octocat.png'), path.join(tempdir.path, 'octocat.png'), 'file');
 fs.symlinkSync(path.resolve('test/fixtures/expand'), path.join(tempdir.path, 'expand'), 'dir');
 
-describe('path utils:', function () {
+describe('path:', function () {
   beforeEach(function (cb) {
     this.cwd = process.cwd();
     process.chdir('test/fixtures/expand');
@@ -75,7 +75,7 @@ describe('path utils:', function () {
     test.equal(file.isPathInCwd('nonexistent'), false, 'nonexistent path is not in cwd');
   });
 
-  describe('.cwdUnderSymlink():', function () {
+  describe('when cwd is in a symlink:', function () {
     beforeEach(function (cb) {
       this.cwd = process.cwd();
       process.chdir(path.join(tempdir.path, 'expand'));

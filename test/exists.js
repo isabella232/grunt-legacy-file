@@ -13,7 +13,7 @@ var Tempdir = require('temporary/lib/dir');
 var tempdir = new Tempdir();
 var file = require('..');
 
-describe('file.isMatch():', function () {
+describe('file.exists():', function () {
   it('.exists():', function () {
     test.ok(file.exists('test/fixtures/octocat.png'), 'files exist.');
     test.ok(file.exists('test', 'fixtures', 'octocat.png'), 'should work for paths in parts.');

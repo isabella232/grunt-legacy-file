@@ -10,7 +10,7 @@
 require('should');
 var file = require('..');
 
-describe('file.isMatch():', function () {
+describe('file.recurse():', function () {
   it('.recurse():', function () {
     var rootdir = 'test/fixtures/expand';
     var expected = {};
