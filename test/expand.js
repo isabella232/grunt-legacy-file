@@ -13,18 +13,19 @@ var path = require('path');
 var Tempdir = require('temporary/lib/dir');
 var tempdir = new Tempdir();
 var file = require('..');
+var cwd;
 
 fs.symlinkSync(path.resolve('test/fixtures/octocat.png'), path.join(tempdir.path, 'octocat.png'), 'file');
 fs.symlinkSync(path.resolve('test/fixtures/expand'), path.join(tempdir.path, 'expand'), 'dir');
 
 describe('file.expand():', function () {
   beforeEach(function (cb) {
-    this.cwd = process.cwd();
+    cwd = process.cwd();
     process.chdir('test/fixtures/expand');
     cb();
   });
   afterEach(function (cb) {
-    process.chdir(this.cwd);
+    process.chdir(cwd);
     cb();
   });
 
@@ -87,12 +88,12 @@ describe('file.expand():', function () {
 
 describe('exclusion:', function () {
   beforeEach(function (cb) {
-    this.cwd = process.cwd();
+    cwd = process.cwd();
     process.chdir('test/fixtures/expand');
     cb();
   });
   afterEach(function (cb) {
-    process.chdir(this.cwd);
+    process.chdir(cwd);
     cb();
   });
 
@@ -124,12 +125,12 @@ describe('exclusion:', function () {
 
 describe('options:', function () {
   beforeEach(function (cb) {
-    this.cwd = process.cwd();
+    cwd = process.cwd();
     process.chdir('test/fixtures/expand');
     cb();
   });
   afterEach(function (cb) {
-    process.chdir(this.cwd);
+    process.chdir(cwd);
     cb();
   });
 
