@@ -10,25 +10,51 @@
 require('should');
 var fs = require('fs');
 var path = require('path');
-var Tempdir = require('temporary/lib/dir');
-var tempdir = new Tempdir();
 var file = require('..');
 
-describe('file.mkdir():', function () {
-  it('.mkdir():', function () {
-    test.doesNotThrow(function () {
-      file.mkdir(tempdir.path);
-    }, 'Should not explode if the directory already exists.');
-    test.ok(fs.existsSync(tempdir.path), 'path should still exist.');
+describe('.mkdir():', function () {
+  before(function () {
+    file.mkdir(__dirname + '/temp');
+  });
+  after(function () {
+    file.delete(__dirname + '/temp/');
+  });
 
-    test.doesNotThrow(function () {
-      file.mkdir(path.join(tempdir.path, 'aa/bb/cc'));
-    }, 'Should also not explode, otherwise.');
-    test.ok(path.join(tempdir.path, 'aa/bb/cc'), 'path should have been created.');
+  it('should not explode when a directory already exists:', function () {
+    (function () {
+      file.mkdir(__dirname + '/temp/'); 
+    }).should.not.throw();
+  });
 
-    fs.writeFileSync(path.join(tempdir.path, 'aa/bb/xx'), 'test');
-    test.throws(function () {
-      file.mkdir(path.join(tempdir.path, 'aa/bb/xx/yy'));
-    }, 'Should throw if a path cannot be created (ENOTDIR).');
+  it('filepath should still exist.', function () {
+    fs.existsSync(__dirname + '/temp/').should.be.true;
+  });
+
+  it('should not explode when a directory does NOT already exists:', function () {
+    (function () {
+      file.mkdir(__dirname + '/temp/aa/bb/cc');
+    }).should.not.throw();
+  });
+
+  it('filepath should still exist.', function () {
+    fs.existsSync(__dirname + '/temp/aa/bb/cc').should.be.true;
+  });
+
+  it('should not explode when a directory does NOT already exists:', function () {
+    (function () {
+      file.mkdir(__dirname + '/temp/aa/bb/cc');
+    }).should.not.throw();
+  });
+
+  it('filepath should still exist.', function () {
+    fs.existsSync(__dirname + '/temp/aa/bb/cc').should.be.true;
+  });
+
+  it('should throw if a path cannot be created (ENOTDIR).', function () {
+    fs.writeFileSync(path.join(__dirname + '/temp/aa/bb/xx'), 'test');
+
+    (function () {
+      file.mkdir(path.join(__dirname + '/temp/aa/bb/xx/yy')); 
+    }).should.throw();
   });
 });
