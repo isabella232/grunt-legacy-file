@@ -192,9 +192,6 @@ describe('file.expandMapping():', function () {
       }
     });
     var expected = [{
-      dest: 'dest/all.md',
-      src: ['expand/README.md']
-    }, {
       dest: 'dest/all.css',
       src: ['expand/css/baz.css', 'expand/css/qux.css']
     }, {
@@ -203,6 +200,9 @@ describe('file.expandMapping():', function () {
     }, {
       dest: 'dest/all.js',
       src: ['expand/js/bar.js', 'expand/js/foo.js']
+    }, {
+      dest: 'dest/all.md',
+      src: ['expand/README.md']
     }];
     actual.should.eql(expected); // 'if dest is same for multiple src, create an array of src'
   });
