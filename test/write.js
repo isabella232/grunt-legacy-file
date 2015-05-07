@@ -16,43 +16,45 @@ var Tempdir = require('temporary/lib/dir');
 var tempdir = new Tempdir();
 var utils = require('./utils');
 var file = require('..');
+var string = 'Ação é isso aí\n';
 
-describe('file.write():', function () {
-  it('.write():', function () {
-    var tmpfile;
-    tmpfile = new Tempfile();
-    file.write(tmpfile.path, this.string);
-    test.strictEqual(fs.readFileSync(tmpfile.path, 'utf8'), this.string, 'file should be written as utf8 by default.');
-    tmpfile.unlinkSync();
+describe('.write():', function () {
+  it('file should be written as utf8 by default.', function () {
+    var tempfile = new Tempfile();
+    file.write(tempfile.path, string);
+    fs.readFileSync(tempfile.path, 'utf8').should.equal(string);
+    tempfile.unlinkSync();
+  });
 
-    tmpfile = new Tempfile();
-    file.write(tmpfile.path, this.string, {
-      encoding: 'iso-8859-1'
-    });
-    test.strictEqual(file.read(tmpfile.path, {
-      encoding: 'iso-8859-1'
-    }), this.string, 'file should be written using the specified encoding.');
-    tmpfile.unlinkSync();
+  it('should write a file using default encoding', function () {
+    var tempfile = new Tempfile();
+    file.write(tempfile.path, string, {encoding: 'iso-8859-1'});
+    file.read(tempfile.path, {encoding: 'iso-8859-1'}).should.equal(string);
+    tempfile.unlinkSync();
+  });
 
+  it('should allow encoding to be changed:', function () {
     file.defaultEncoding = 'iso-8859-1';
-    tmpfile = new Tempfile();
-    file.write(tmpfile.path, this.string);
+    var tempfile = new Tempfile();
+    file.write(tempfile.path, string);
     file.defaultEncoding = 'utf8';
-    test.strictEqual(file.read(tmpfile.path, {
-      encoding: 'iso-8859-1'
-    }), this.string, 'changing the default encoding should work.');
-    tmpfile.unlinkSync();
+    file.read(tempfile.path, {encoding: 'iso-8859-1'}).should.eql(string);
+    tempfile.unlinkSync();
+  });
 
-    tmpfile = new Tempfile();
+  it('should always write buffers as-specified, with no attempt at re-encoding.', function () {
+    var tempfile = new Tempfile();
     var octocat = fs.readFileSync('test/fixtures/octocat.png');
-    file.write(tmpfile.path, octocat);
-    test.ok(utils.compareBuffers(fs.readFileSync(tmpfile.path), octocat), 'buffers should always be written as-specified, with no attempt at re-encoding.');
-    tmpfile.unlinkSync();
+    file.write(tempfile.path, octocat);
+    utils.compareBuffers(fs.readFileSync(tempfile.path), octocat).should.be.true;
+    tempfile.unlinkSync();
+  });
 
+  it('should NOT create a file if --no-write was specified.', function () {
     grunt.option('write', false);
     var filepath = path.join(tempdir.path, 'should-not-exist.txt');
     file.write(filepath, 'test');
-    test.equal(file.exists(filepath), false, 'file should NOT be created if --no-write was specified.');
+    file.exists(filepath).should.be.false;
   });
 });
 
