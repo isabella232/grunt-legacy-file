@@ -12,7 +12,6 @@ var fs = require('fs');
 var file = require('..');
 var utils = require('./utils');
 
-
 describe('.read():', function () {
   var string = 'Ação é isso aí\n';
   var object = {foo: 'Ação é isso aí', bar: ['ømg', 'pønies']};

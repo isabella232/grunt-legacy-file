@@ -11,7 +11,7 @@ require('should');
 var file = require('..');
 
 describe('file.recurse():', function () {
-  it('.recurse():', function () {
+  it('paths and arguments should match.', function () {
     var rootdir = 'test/fixtures/expand';
     var expected = {};
     expected[rootdir + '/css/baz.css'] = [rootdir, 'css', 'baz.css'];
@@ -27,6 +27,7 @@ describe('file.recurse():', function () {
     file.recurse(rootdir, function (abspath, rootdir, subdir, filename) {
       actual[abspath] = [rootdir, subdir, filename];
     });
-    actual.should.eql(expected); // 'paths and arguments should match.'
+
+    actual.should.eql(expected);
   });
 });

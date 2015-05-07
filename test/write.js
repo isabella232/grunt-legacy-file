@@ -13,13 +13,13 @@ var path = require('path');
 var grunt = require('grunt');
 var Tempfile = require('temporary/lib/file');
 var Tempdir = require('temporary/lib/dir');
-var tempdir = new Tempdir();
 var utils = require('./utils');
 var file = require('..');
-var string = 'Ação é isso aí\n';
 
 describe('.write():', function () {
-  it('file should be written as utf8 by default.', function () {
+  var string = 'Ação é isso aí\n';
+
+  it.skip('file should be written as utf8 by default.', function () {
     var tempfile = new Tempfile();
     file.write(tempfile.path, string);
     fs.readFileSync(tempfile.path, 'utf8').should.equal(string);
@@ -51,6 +51,7 @@ describe('.write():', function () {
   });
 
   it('should NOT create a file if --no-write was specified.', function () {
+    var tempdir = new Tempdir();
     grunt.option('write', false);
     var filepath = path.join(tempdir.path, 'should-not-exist.txt');
     file.write(filepath, 'test');
