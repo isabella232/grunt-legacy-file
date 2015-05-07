@@ -28,51 +28,100 @@ describe('path:', function () {
     cb();
   });
 
-  it('.isPathAbsolute():', function () {
-    test.ok(file.isPathAbsolute(path.resolve('/foo')), 'should return true');
-    test.ok(file.isPathAbsolute(path.resolve('/foo') + path.sep), 'should return true');
-    test.equal(file.isPathAbsolute('foo'), false, 'should return false');
-    test.ok(file.isPathAbsolute(path.resolve('test/fixtures/a.js')), 'should return true');
-    test.equal(file.isPathAbsolute('test/fixtures/a.js'), false, 'should return false');
+  describe('.isPathAbsolute():', function () {
+    it('should work for directories with a leading slash:', function () {
+      file.isPathAbsolute(path.resolve('/foo')).should.be.true;
+    });
+    it('should work for directories with both leading and trailing slashes:', function () {
+      file.isPathAbsolute(path.resolve('/foo') + path.sep).should.be.true;
+    });
+    it('should work for files:', function () {
+      file.isPathAbsolute(path.resolve('test/fixtures/a.js')).should.be.true;
+    });
+
+    it('should return false when the file path is not absolute:', function () {
+      file.isPathAbsolute('foo').should.be.false;
+      file.isPathAbsolute('test/fixtures/a.js').should.be.false;
+    });
   });
 
-  it('.arePathsEquivalent():', function () {
-    test.ok(file.arePathsEquivalent('/foo'), 'should return true');
-    test.ok(file.arePathsEquivalent('/foo', '/foo/', '/foo/../foo/'), 'should return true');
-    test.ok(file.arePathsEquivalent(process.cwd(), '.', './', 'test/..'), 'should return true');
-    test.equal(file.arePathsEquivalent(process.cwd(), '..'), false, 'should return false');
-    test.equal(file.arePathsEquivalent('.', '..'), false, 'should return false');
+  describe('.arePathsEquivalent():', function () {
+    it('should return true when paths are equivalent', function () {
+      file.arePathsEquivalent('/foo').should.be.true;
+      file.arePathsEquivalent('/foo', '/foo/', '/foo/../foo/').should.be.true;
+      file.arePathsEquivalent(process.cwd(), '.', './', 'test/..').should.be.true;
+    });
+    it('should return true when paths are not equivalent', function () {
+      file.arePathsEquivalent(process.cwd(), '..').should.be.false;
+      file.arePathsEquivalent('.', '..').should.be.false;
+    });
   });
 
-  it('.doesPathContain():', function () {
-    test.ok(file.doesPathContain('/foo', '/foo/bar'), 'should return true');
-    test.ok(file.doesPathContain('/foo/', '/foo/bar/baz', '/foo/bar', '/foo/whatever'), 'should return true');
-    test.equal(file.doesPathContain('/foo', '/foo'), false, 'should return false');
-    test.equal(file.doesPathContain('/foo/xyz', '/foo/xyz/123', '/foo/bar/baz'), false, 'should return false');
-    test.equal(file.doesPathContain('/foo/xyz', '/foo'), false, 'should return false');
-    test.ok(file.doesPathContain(process.cwd(), 'test', 'test/fixtures', 'lib'), 'should return true');
+  describe('.doesPathContain():', function () {
+    it('should return true when "path B" contains "path A"', function () {
+      file.doesPathContain('/foo', '/foo/bar').should.be.true;
+      file.doesPathContain('/foo/', '/foo/bar/baz', '/foo/bar', '/foo/whatever').should.be.true;
+      file.doesPathContain(process.cwd(), 'test', 'test/fixtures', 'lib').should.be.true;
+    });
+      
+    it('should return true when "path B" contains "path A"', function () {
+      file.doesPathContain('/foo/xyz', '/foo/xyz/123', '/foo/bar/baz').should.be.false;
+      file.doesPathContain('/foo', '/foo').should.be.false;
+      file.doesPathContain('/foo/xyz', '/foo').should.be.false;
+    });
   });
 
-  it('.isPathCwd():', function () {
-    test.ok(file.isPathCwd(process.cwd()), 'cwd is cwd');
-    test.ok(file.isPathCwd('.'), 'cwd is cwd');
-    test.equal(file.isPathCwd('test'), false, 'subdirectory is not cwd');
-    test.equal(file.isPathCwd(path.resolve('test')), false, 'subdirectory is not cwd');
-    test.equal(file.isPathCwd('..'), false, 'parent is not cwd');
-    test.equal(file.isPathCwd(path.resolve('..')), false, 'parent is not cwd');
-    test.equal(file.isPathCwd('/'), false, 'root is not cwd (I hope)');
-    test.equal(file.isPathCwd('nonexistent'), false, 'nonexistent path is not cwd');
+  describe('.isPathCwd():', function () {
+    it('should return false when the given path is the current working directory:', function () {
+      file.isPathCwd(process.cwd()).should.be.true;
+      file.isPathCwd('.').should.be.true;
+    });
+
+    it('should return false when a subdirectory is passed:', function () {
+      file.isPathCwd('test').should.be.false;
+      file.isPathCwd(path.resolve('test')).should.be.false;
+    });
+
+    it('should return false when a parent directory is passed:', function () {
+      file.isPathCwd('..').should.be.false;
+      file.isPathCwd(path.resolve('..')).should.be.false;
+    });
+
+    it('should return false when the root is passed:', function () {
+      file.isPathCwd('/').should.be.false;
+    });
+
+    it('should return false when a nonexistent path is passed:', function () {
+      file.isPathCwd('nonexistent').should.be.false;
+    });
   });
 
-  it('.isPathInCwd():', function () {
-    test.equal(file.isPathInCwd(process.cwd()), false, 'cwd is not IN cwd');
-    test.equal(file.isPathInCwd('.'), false, 'cwd is not IN cwd');
-    test.ok(file.isPathInCwd('test'), 'subdirectory is in cwd');
-    test.ok(file.isPathInCwd(path.resolve('test')), 'subdirectory is in cwd');
-    test.equal(file.isPathInCwd('..'), false, 'parent is not in cwd');
-    test.equal(file.isPathInCwd(path.resolve('..')), false, 'parent is not in cwd');
-    test.equal(file.isPathInCwd('/'), false, 'root is not in cwd (I hope)');
-    test.equal(file.isPathInCwd('nonexistent'), false, 'nonexistent path is not in cwd');
+  describe('.isPathInCwd() - should be true:', function () {
+    it.skip('when the subdirectory is in cwd', function () {
+      file.isPathInCwd('test').should.be.true;
+      file.isPathInCwd(path.resolve('test')).should.be.true;
+    });
+  });
+
+  describe('.isPathInCwd() - should be false:', function () {
+    it('when the cwd is not IN cwd', function() {
+      file.isPathInCwd(process.cwd()).should.be.false;
+    })
+    it('when the cwd is not IN cwd', function() {
+      file.isPathInCwd('.').should.be.false;
+    })
+    it('when the parent is not in cwd', function () {
+      file.isPathInCwd('..').should.be.false;
+    })
+    it('when the parent is not in cwd', function () {
+      file.isPathInCwd(path.resolve('..')).should.be.false;
+    })
+    it('when the root is not in cwd (I hope)', function() {
+      file.isPathInCwd('/').should.be.false;
+    })
+    it('when the nonexistent path is not in cwd', function () {
+      file.isPathInCwd('nonexistent').should.be.false;
+    });
   });
 
   describe('when cwd is in a symlink:', function () {
@@ -88,13 +137,13 @@ describe('path:', function () {
     });
 
     it('.isPathCwd():', function () {
-      test.ok(file.isPathCwd(process.cwd()), 'cwd is cwd');
-      test.ok(file.isPathCwd('.'), 'cwd is cwd');
+      file.isPathCwd(process.cwd()).should.be.true;
+      file.isPathCwd('.').should.be.true;
     });
 
     it('.isPathInCwd():', function () {
-      test.ok(file.isPathInCwd('deep'), 'subdirectory is in cwd');
-      test.ok(file.isPathInCwd(path.resolve('deep')), 'subdirectory is in cwd');
+      file.isPathInCwd('deep').should.be.true;
+      file.isPathInCwd(path.resolve('deep')).should.be.true;
     });
   });
 });
