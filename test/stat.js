@@ -14,55 +14,45 @@ var Tempdir = require('temporary/lib/dir');
 var tempdir = new Tempdir();
 var file = require('..');
 
-describe.skip('file.stat():', function () {
-  var realFile = __dirname + '/fixtures/a.js';
-  var realDir = __dirname + '/fixtures/expand/';
-  var fakeFile = __dirname + '/temp/a.js';
-  var fakeDir = __dirname + '/temp/expand/';
 
-  before(function () {
-    fs.symlinkSync(realFile, fakeFile, 'file');
-    fs.symlinkSync(realDir, fakeDir, 'dir');
-  });
+fs.symlinkSync(path.resolve('test/fixtures/octocat.png'), path.join(tempdir.path, 'octocat.png'), 'file');
+fs.symlinkSync(path.resolve('test/fixtures/expand'), path.join(tempdir.path, 'expand'), 'dir');
 
-  after(function () {
-    file.delete(fakeFile);
-    file.delete(fakeDir);
-  });
 
+describe('.stat():', function () {
   describe('.isLink() - false:', function () {
     it('should return false when files are not symlinks.', function () {
-      file.isLink('fixtures/a.js').should.be.false;
+      file.isLink('test/fixtures/octocat.png').should.be.false;
     });
     it('should return false when directories are not symlinks.', function () {
-      file.isLink('fixtures').should.be.false;
+      file.isLink('test/fixtures').should.be.false;
     });
     it('should return false when a filepath does not exist.', function () {
-      file.isLink('fixtures/does/not/exist').should.be.false;
+      file.isLink('test/fixtures/does/not/exist').should.be.false;
     });
   });
 
   describe('.isLink() - true:', function () {
     it('should return true when files are symlinks.', function () {
-      file.isLink(fakeFile).should.be.true;
+      file.isLink(path.join(tempdir.path, 'octocat.png')).should.be.true;
     });
     it('should return true when directories are symlinks.', function () {
-      file.isLink(fakeDir).should.be.true;
+      file.isLink(path.join(tempdir.path, 'expand')).should.be.true;
     });
-    it('should return true when a filepath is passed as segments.', function () {
-      file.isLink(__dirname, 'temp', 'a.js').should.be.true;
+    it('should work for paths in parts.', function () {
+      file.isLink(tempdir.path, 'octocat.png').should.be.true;
     });
   });
 
   describe('.isDir():', function () {
     it('should work for directories:', function () {
-      file.isDir('test/fixtures').should.be.true;
+      file.isDir('test/fixtures/octocat.png').should.be.false;
     });
     it('should work for paths in parts.', function () {
       file.isDir('test', 'fixtures').should.be.true;
     });
     it('should return true when a path is not a directory.', function () {
-      file.isDir(path.join(tempdir.path, 'a.js')).should.be.false;
+      file.isDir(path.join(tempdir.path, 'octocat.png')).should.be.false;
     });
     it('directory links are directories.', function () {
       file.isDir(path.join(tempdir.path, 'expand')).should.be.true;
@@ -74,16 +64,16 @@ describe.skip('file.stat():', function () {
 
   describe('.isFile():', function () {
     it('files are files.', function () {
-      file.isFile('test/fixtures/a.js').should.be.true;
+      file.isFile('test/fixtures/octocat.png').should.be.true;
     });
     it('should work for paths in parts.', function () {
-      file.isFile('test', 'fixtures', 'a.js').should.be.true;
+      file.isFile('test', 'fixtures', 'octocat.png').should.be.true;
     });
     it('directories are not files.', function () {
       file.isFile('test/fixtures').should.be.false;
     });
     it('file links are files.', function () {
-      file.isFile(path.join(tempdir.path, 'a.js')).should.be.true;
+      file.isFile(path.join(tempdir.path, 'octocat.png')).should.be.true;
     });
     it('directory links are not files.', function () {
       file.isFile(path.join(tempdir.path, 'expand')).should.be.false;
