@@ -18,8 +18,18 @@ var file = require('..');
 
 describe('.write():', function () {
   var string = 'Ação é isso aí\n';
+  var defaultEncoding;
 
-  it.skip('file should be written as utf8 by default.', function () {
+  beforeEach(function () {
+    defaultEncoding = file.defaultEncoding;
+    file.defaultEncoding = 'utf8';
+  });
+
+  afterEach(function () {
+    file.defaultEncoding = defaultEncoding;
+  });
+
+  it('file should be written as utf8 by default.', function () {
     var tempfile = new Tempfile();
     file.write(tempfile.path, string);
     fs.readFileSync(tempfile.path, 'utf8').should.equal(string);
