@@ -18,16 +18,6 @@ fs.symlinkSync(path.resolve('test/fixtures/octocat.png'), path.join(tempdir.path
 fs.symlinkSync(path.resolve('test/fixtures/expand'), path.join(tempdir.path, 'expand'), 'dir');
 
 describe('path:', function () {
-  beforeEach(function (cb) {
-    this.cwd = process.cwd();
-    process.chdir('test/fixtures/expand');
-    cb();
-  });
-  afterEach(function (cb) {
-    process.chdir(this.cwd);
-    cb();
-  });
-
   describe('.isPathAbsolute():', function () {
     it('should work for directories with a leading slash:', function () {
       file.isPathAbsolute(path.resolve('/foo')).should.be.true;
@@ -63,7 +53,7 @@ describe('path:', function () {
       file.doesPathContain('/foo/', '/foo/bar/baz', '/foo/bar', '/foo/whatever').should.be.true;
       file.doesPathContain(process.cwd(), 'test', 'test/fixtures', 'lib').should.be.true;
     });
-      
+
     it('should return true when "path B" contains "path A"', function () {
       file.doesPathContain('/foo/xyz', '/foo/xyz/123', '/foo/bar/baz').should.be.false;
       file.doesPathContain('/foo', '/foo').should.be.false;
@@ -97,17 +87,17 @@ describe('path:', function () {
   });
 
   describe('.isPathInCwd() - should be true:', function () {
-    it.skip('when the subdirectory is in cwd', function () {
+    it('when a subdirectory is in cwd', function () {
       file.isPathInCwd('test').should.be.true;
       file.isPathInCwd(path.resolve('test')).should.be.true;
     });
   });
 
   describe('.isPathInCwd() - should be false:', function () {
-    it('when the cwd is not IN cwd', function() {
+    it('when a subdirectory is NOT in the cwd', function() {
       file.isPathInCwd(process.cwd()).should.be.false;
     })
-    it('when the cwd is not IN cwd', function() {
+    it('when a subdirectory is NOT in the cwd', function() {
       file.isPathInCwd('.').should.be.false;
     })
     it('when the parent is not in cwd', function () {
