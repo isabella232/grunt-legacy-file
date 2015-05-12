@@ -11,7 +11,7 @@ This is not ready for use yet! We'll update the readme when it's ready to go, fe
 Install with [npm](https://www.npmjs.com/)
 
 ```bash
-npm i grunt-legacy-file --save
+npm i grunt-legacy-file --save-dev
 ```
 
 ## Usage
@@ -32,7 +32,7 @@ _(loosely in this order...)_
 
 * [x] migrate code
 * [x] migrate tests
-* [ ] get tests passing with 100% parity
+* [x] get tests passing with 100% parity
 * [ ] coverage reports
 * [ ] API documentation, written as code comments
 * [ ] Add the event to the changelogs of both libraries
