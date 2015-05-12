@@ -18,10 +18,6 @@ var utils = require('./utils');
 var file = require('..');
 
 
-function fixtures(name) {
-  return path.resolve(__dirname, 'fixtures', name);
-}
-
 describe('.copy():', function () {
   var string = 'Ação é isso aí\n';
   var object = {foo: 'Ação é isso aí', bar: ['ømg', 'pønies']};
@@ -35,39 +31,37 @@ describe('.copy():', function () {
   });
 
   afterEach(function(done) {
-    grunt.option('write', true);
     file.defaultEncoding = defaultEncoding;
     done();
   });
 
-  describe('encoding:', function () {
-    it('should copy files as encoding-agnostic by default.', function () {
+  describe('.copy', function() {
+    it('files should just be copied as encoding-agnostic by default.', function() {
       tempfile = new Tempfile();
-      file.copy(fixtures('utf8.txt'), tempfile.path);
-      utils.compareFiles(fixtures('utf8.txt'), tempfile.path).should.be.true;
+      file.copy('test/fixtures/utf8.txt', tempfile.path);
+      assert.equal(utils.compareFiles(tempfile.path, 'test/fixtures/utf8.txt'), true);
       tempfile.unlinkSync();
     });
 
-    it('files should just be copied as encoding-agnostic by default.', function () {
+    it('files should just be copied as encoding-agnostic by default.', function() {
       tempfile = new Tempfile();
-      file.copy(fixtures('iso-8859-1.txt'), tempfile.path);
-      utils.compareFiles(fixtures('iso-8859-1.txt'), tempfile.path).should.be.true;
+      file.copy('test/fixtures/iso-8859-1.txt', tempfile.path);
+      assert.equal(utils.compareFiles(tempfile.path, 'test/fixtures/iso-8859-1.txt'), true);
       tempfile.unlinkSync();
     });
 
-    it('files should just be copied as encoding-agnostic by default.', function () {
+    it('files should just be copied as encoding-agnostic by default.', function() {
       tempfile = new Tempfile();
-      file.copy(fixtures('octocat.png'), tempfile.path);
-      utils.compareFiles(fixtures('octocat.png'), tempfile.path).should.be.true;
+      file.copy('test/fixtures/octocat.png', tempfile.path);
+      assert.equal(utils.compareFiles(tempfile.path, 'test/fixtures/octocat.png'), true);
       tempfile.unlinkSync();
     });
 
-    it('should NOT create a file when --no-write is specified.', function () {
-      tempfile = new Tempfile();
+    it('file should NOT be created if --no-write was specified.', function() {
       grunt.option('write', false);
-      var fp = path.join(tempdir.path, 'should-not-exist.txt');
-      file.copy('test/fixtures/utf8.txt', fp);
-      file.exists(fp).should.be.false;
+      var filepath = path.join(tempdir.path, 'should-not-exist.txt');
+      file.copy('test/fixtures/utf8.txt', filepath);
+      assert.equal(file.exists(filepath), false);
     });
   });
 
@@ -127,120 +121,147 @@ describe('.copy():', function () {
       });
     });
 
-    describe.skip('when no encoding is specified', function () {
-      it('should use the default encoding and process contents as a string', function () {
+    describe('copy and process', function() {
+      var tempfile;
+      it('srcpath should be passed in, as-specified.', function () {
         tempfile = new Tempfile();
-        file.copy(fixtures('utf8.txt'), tempfile.path, {
-          process: function (contents, src, dest) {
-            Buffer.isBuffer(src).should.be.false;
-            contents.should.be.a.string;
-            contents.should.equal(string);
-            return 'føø' + contents + 'bår';
-          }
-        });
-        tempfile.unlinkSync();
-      });
-
-      it('should write the file using the default encoding', function () {
-        tempfile = new Tempfile();
-        file.copy(fixtures('utf8.txt'), tempfile.path, {
-          process: function (contents, src, dest) {
-            Buffer.isBuffer(src).should.be.false;
-            contents.should.be.a.string;
-            contents.should.equal(string);
-            return 'føø' + contents + 'bår';
-          }
-        });
-        file.read(tempfile.path).should.equal('føø' + string + 'bår');
-        tempfile.unlinkSync();
-      });
-    });
-
-    describe('alternate encoding:', function () {
-      it.skip('should use the specified encoding and process its contents as a string', function () {
-        tempfile = new Tempfile();
-        file.copy(fixtures('iso-8859-1.txt'), tempfile.path, {
-          encoding: 'iso-8859-1',
-          process: function (contents, src, dest) {
-            Buffer.isBuffer(contents).should.be.false;
-            contents.should.be.a.string;
-            contents.should.equal(string);
+        file.copy('test/fixtures/utf8.txt', tempfile.path, {
+          process: function(src, srcpath, destpath) {
+            assert.equal(srcpath, 'test/fixtures/utf8.txt', true);
             return 'føø' + src + 'bår';
           }
         });
-
-        file.read(tempfile.path, { encoding: 'iso-8859-1' }).should.equal('føø' + string + 'bår');
         tempfile.unlinkSync();
       });
-    });
 
-    describe('when encoding is specified as null:', function () {
-      it.skip('should process contents as a buffer:', function () {
+      it('destpath should be passed in, as-specified.', function () {
         tempfile = new Tempfile();
-        file.copy(fixtures('iso-8859-1.txt'), tempfile.path, {
-          encoding: null,
-          process: function (contents, src, dest) {
-            Buffer.isBuffer(contents).should.be.true;
-            contents.should.equal(string);
-            return new Buffer('føø' + contents.toString() + 'bår');
+        file.copy('test/fixtures/utf8.txt', tempfile.path, {
+          process: function(src, srcpath, destpath) {
+            assert.equal(destpath, tempfile.path, true);
+            return 'føø' + src + 'bår';
           }
         });
         tempfile.unlinkSync();
       });
 
-      it.skip('should save the file with the buffer returned by `process`:', function () {
+      it('when no encoding is specified, use default encoding and process src as a string', function () {
         tempfile = new Tempfile();
-        file.copy(fixtures('iso-8859-1.txt'), tempfile.path, {
-          encoding: null,
-          process: function (contents, src, dest) {
-            Buffer.isBuffer(contents).should.be.true;
-            contents.should.equal(string);
-            return new Buffer('føø' + contents.toString() + 'bår');
+        file.copy('test/fixtures/utf8.txt', tempfile.path, {
+          process: function(src, srcpath, destpath) {
+            assert.equal(Buffer.isBuffer(src), false);
+            return 'føø' + src + 'bår';
           }
         });
-        file.read(tempfile.path).should.equal('føø' + string + 'bår');
         tempfile.unlinkSync();
       });
-    });
 
-    describe('file.defaultEncoding:', function () {
-      it('use non-utf8 default encoding and process contents as a string', function () {
+      it('when no encoding is specified, use default encoding and process src as a string', function () {
         tempfile = new Tempfile();
-        file.defaultEncoding = 'iso-8859-1';
-        file.copy(fixtures('iso-8859-1.txt'), tempfile.path, {
-          process: function (contents, src, dest) {
-            Buffer.isBuffer(contents).should.be.false;
-            contents.should.be.a.string;
-            contents.should.equal(string);
+        file.copy('test/fixtures/utf8.txt', tempfile.path, {
+          process: function(contents, srcpath, destpath) {
+            assert.equal(typeof contents, 'string', true);
             return 'føø' + contents + 'bår';
           }
         });
         tempfile.unlinkSync();
       });
-      it('should write the file to disk with non-utf8 encoding:', function () {
+
+      it('file should be saved as properly encoded processed string.', function () {
         tempfile = new Tempfile();
-        file.defaultEncoding = 'iso-8859-1';
-        file.copy(fixtures('iso-8859-1.txt'), tempfile.path, {
-          process: function (contents, src, dest) {
-            Buffer.isBuffer(contents).should.be.false;
-            contents.should.be.a.string;
-            contents.should.equal(string);
+        file.copy('test/fixtures/utf8.txt', tempfile.path, {
+          process: function(contents, srcpath, destpath) {
             return 'føø' + contents + 'bår';
           }
         });
-        file.read(tempfile.path).should.equal('føø' + string + 'bår');
+        assert.equal(file.read(tempfile.path), 'føø' + string + 'bår', true);
         tempfile.unlinkSync();
       });
-    });
 
-    it('should not create a file if process returns false:', function () {
-      var fp = path.join(tempdir.path, 'should-not-exist.txt');
-      file.copy('test/fixtures/iso-8859-1.txt', fp, {
-        process: function () {
-          return false;
-        }
+      it('use specified encoding and process src as a string', function () {
+        tempfile = new Tempfile();
+        file.copy('test/fixtures/iso-8859-1.txt', tempfile.path, {
+          encoding: 'iso-8859-1',
+          process: function(src) {
+            assert.equal(Buffer.isBuffer(src), false);
+            assert.equal(typeof src, 'string', true);
+            return 'føø' + src + 'bår';
+          }
+        });
+        tempfile.unlinkSync();
       });
-      file.exists(fp).should.be.false;
+
+      it('file should be saved as properly encoded processed string.', function () {
+        tempfile = new Tempfile();
+        file.copy('test/fixtures/iso-8859-1.txt', tempfile.path, {
+          encoding: 'iso-8859-1',
+          process: function(src) {
+            return 'føø' + src + 'bår';
+          }
+        });
+        assert.equal(file.read(tempfile.path, {encoding: 'iso-8859-1'}), 'føø' + string + 'bår', true);
+        tempfile.unlinkSync();
+      });
+
+      it('when encoding is specified as null, process src as a buffer', function () {
+        tempfile = new Tempfile();
+        file.copy('test/fixtures/utf8.txt', tempfile.path, {
+          encoding: null,
+          process: function(src) {
+            assert.equal(Buffer.isBuffer(src), true);
+            return new Buffer('føø' + src.toString() + 'bår');
+          }
+        });
+        tempfile.unlinkSync();
+      });
+
+      it('file should be saved as the buffer returned by process.', function () {
+        tempfile = new Tempfile();
+        file.copy('test/fixtures/utf8.txt', tempfile.path, {
+          encoding: null,
+          process: function(src) {
+            return new Buffer('føø' + src.toString() + 'bår');
+          }
+        });
+        assert.equal(file.read(tempfile.path), 'føø' + string + 'bår', true);
+        tempfile.unlinkSync();
+      });
+
+      it('use non-utf8 default encoding and process src as a string', function() {
+        file.defaultEncoding = 'iso-8859-1';
+        tempfile = new Tempfile();
+        file.copy('test/fixtures/iso-8859-1.txt', tempfile.path, {
+          process: function(src) {
+            assert.equal(Buffer.isBuffer(src), false);
+            assert.equal(typeof src, 'string', true);
+            return 'føø' + src + 'bår';
+          }
+        });
+        tempfile.unlinkSync();
+      });
+
+      it('file should be saved as properly encoded processed string.', function() {
+        file.defaultEncoding = 'iso-8859-1';
+        tempfile = new Tempfile();
+        file.copy('test/fixtures/iso-8859-1.txt', tempfile.path, {
+          process: function(src) {
+            return 'føø' + src + 'bår';
+          }
+        });
+        assert.equal(file.read(tempfile.path), 'føø' + string + 'bår', true);
+        tempfile.unlinkSync();
+      });
+
+      it('file should NOT be created if process returns false.', function() {
+        tempdir = new Tempdir();
+        var filepath = path.join(tempdir.path, 'should-not-exist.txt');
+        file.copy('test/fixtures/iso-8859-1.txt', filepath, {
+          process: function() {
+            return false;
+          }
+        });
+        assert.equal(file.exists(filepath), false);
+      });
     });
 
     describe('copy and process, noprocess:', function () {
@@ -258,10 +279,9 @@ describe('.copy():', function () {
       });
 
       it('file should have been processed.', function () {
-        var files = ['process', 'noprocess', 'othernoprocess'];
         tempfile = new Tempfile();
 
-        files.forEach(function (filename) {
+        ['process', 'noprocess', 'othernoprocess'].forEach(function (filename) {
           var fp = path.join(tempdir.path, filename);
           file.copy('test/fixtures/utf8.txt', fp);
 
@@ -277,14 +297,12 @@ describe('.copy():', function () {
           } else {
             file.read(tempfile.path).should.equal(string);
           }
-
           tempfile.unlinkSync();
-        }, this);
+        });
       });
-
     });
 
-    describe('.recurse', function () {
+    describe('copy directories recursively', function () {
       var copyroot1 = path.join(tempdir.path, 'copy-dir-1');
       var copyroot2 = path.join(tempdir.path, 'copy-dir-2');
 
@@ -297,7 +315,7 @@ describe('.copy():', function () {
         });
       });
 
-      it('should craete empty directories.', function () {
+      it('should create empty directories.', function () {
         file.mkdir(path.join(copyroot1, 'empty'));
         file.mkdir(path.join(copyroot1, 'deep/deeper/empty'));
         file.copy(copyroot1, copyroot2, {
@@ -319,10 +337,3 @@ describe('.copy():', function () {
     });
   });
 });
-
-
-
-
-
-
-

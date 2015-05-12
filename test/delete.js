@@ -21,7 +21,7 @@ fs.symlinkSync(path.resolve('test/fixtures/expand'), path.join(tempdir.path, 'ex
 
 describe('file.delete():', function () {
   var original, cwd;
-  
+
   before(function(cb) {
     this.writeOption = grunt.option('write');
 
@@ -38,13 +38,13 @@ describe('file.delete():', function () {
     cb();
   });
 
-  after(function(done) {
+  after(function(cb) {
     file.defaultEncoding = this.defaultEncoding;
     grunt.option('write', this.writeOption);
 
     grunt.fail.warn = this.oldFailWarnFn;
     grunt.log.warn = this.oldLogWarnFn;
-    done();
+    cb();
   });
 
   before(function () {
@@ -65,7 +65,7 @@ describe('file.delete():', function () {
     it('should return true after deleting file.', function () {
       file.delete(cwd).should.be.ok;
     });
-    
+
     it('file should have been deleted.', function () {
       file.exists(cwd).should.not.be.ok;
     });
