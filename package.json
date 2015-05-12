@@ -40,7 +40,8 @@
     "grunt": "git://github.com/gruntjs/grunt#master",
     "mocha": "*",
     "should": "*",
-    "temporary": "0.0.8"
+    "temporary": "0.0.8",
+    "verb": "0.7.0"
   },
   "keywords": [
     "file",
