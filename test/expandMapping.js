@@ -1,7 +1,7 @@
 /*!
- * grunt-legacy-file <http://gruntjs.com/grunt-legacy-file>
+ * grunt <http://gruntjs.com/>
  *
- * Copyright (c) 2015, "Cowboy" Ben Alman.
+ * Copyright (c) 2013-2015 "Cowboy" Ben Alman.
  * Licensed under the MIT license.
  */
 
@@ -43,7 +43,7 @@ describe('file.expandMapping():', function () {
     }, ];
 
     it('`destBase` should behave the same both with or without trailing slash:', function () {
-      file.expandMapping(['expand/**/*.txt'], 'dest').should.eql(expected); 
+      file.expandMapping(['expand/**/*.txt'], 'dest').should.eql(expected);
       file.expandMapping(['expand/**/*.txt'], 'dest/').should.eql(expected);
     });
   });
@@ -77,7 +77,7 @@ describe('file.expandMapping():', function () {
         dest: 'dest/expand/deep/deeper/deepest/deepest.foo',
         src: ['expand/deep/deeper/deepest/deepest.txt']
       }, ];
-      file.expandMapping(['expand/**/*.txt'], 'dest', {ext: '.foo'}).should.eql(expected); 
+      file.expandMapping(['expand/**/*.txt'], 'dest', {ext: '.foo'}).should.eql(expected);
     });
 
     it('should add the specified extension:', function () {
@@ -91,7 +91,7 @@ describe('file.expandMapping():', function () {
         dest: 'dest/expand-mapping-ext/file.foo',
         src: ['expand-mapping-ext/file.ext.ension']
       }, ];
-      file.expandMapping(['expand-mapping-ext/**/file*'], 'dest', {ext: '.foo'}).should.eql(expected); 
+      file.expandMapping(['expand-mapping-ext/**/file*'], 'dest', {ext: '.foo'}).should.eql(expected);
     });
 
     it('empty string extension should be added', function () {
