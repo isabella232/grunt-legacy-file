@@ -12,7 +12,7 @@ module.exports = function(grunt) {
   // Project configuration.
   grunt.initConfig({
     jshint: {
-      all: ['*.js', 'test/expand.js'],
+      all: ['*.js', 'test/*.js'],
       options: {
         reporter: require('jshint-stylish'),
         jshintrc: '.jshintrc'

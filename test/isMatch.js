@@ -7,35 +7,35 @@
 
 'use strict';
 
-require('should');
+var assert = require('assert');
 var file = require('..');
 
 describe('file.isMatch():', function () {
   it('basic matching:', function () {
-    file.isMatch('*.js', 'foo.js').should.be.true;
-    file.isMatch('*.js', ['foo.js']).should.be.true;
-    file.isMatch('*.js', ['foo.js', 'bar.css']).should.be.true;
-    file.isMatch(['*.js', '*.css'], 'foo.js').should.be.true;
-    file.isMatch(['*.js', '*.css'], ['foo.js']).should.be.true;
-    file.isMatch(['*.js', '*.css'], ['foo.js', 'bar.css']).should.be.true;
+    assert.equal(file.isMatch('*.js', 'foo.js'), true);
+    assert.equal(file.isMatch('*.js', ['foo.js']), true);
+    assert.equal(file.isMatch('*.js', ['foo.js', 'bar.css']), true);
+    assert.equal(file.isMatch(['*.js', '*.css'], 'foo.js'), true);
+    assert.equal(file.isMatch(['*.js', '*.css'], ['foo.js']), true);
+    assert.equal(file.isMatch(['*.js', '*.css'], ['foo.js', 'bar.css']), true);
   });
 
   it('no matches:', function () {
-    file.isMatch('*.js', 'foo.css').should.be.false;
-    file.isMatch('*.js', ['foo.css', 'bar.css']).should.be.false;
-    file.isMatch(null, 'foo.css').should.be.false;
-    file.isMatch('*.js', null).should.be.false;
-    file.isMatch([], 'foo.css').should.be.false;
-    file.isMatch('*.js', []).should.be.false;
+    assert.notEqual(file.isMatch('*.js', 'foo.css'), true);
+    assert.notEqual(file.isMatch('*.js', ['foo.css', 'bar.css']), true);
+    assert.notEqual(file.isMatch(null, 'foo.css'), true);
+    assert.notEqual(file.isMatch('*.js', null), true);
+    assert.notEqual(file.isMatch([], 'foo.css'), true);
+    assert.notEqual(file.isMatch('*.js', []), true);
   });
 });
 
 describe('options.matchBase():', function () {
   it('should matchBase (minimatch) when specified.', function () {
-    file.isMatch({matchBase: true}, '*.js', ['baz/xyz.js']).should.be.true;
+    assert.equal(file.isMatch({matchBase: true}, '*.js', ['baz/xyz.js']), true);
   });
 
   it('should not matchBase (minimatch) by default.', function () {
-    file.isMatch('*.js', ['baz/xyz.js']).should.be.false;
+    assert.notEqual(file.isMatch('*.js', ['baz/xyz.js']), true);
   });
 });

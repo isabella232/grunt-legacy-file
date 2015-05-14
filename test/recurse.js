@@ -7,7 +7,7 @@
 
 'use strict';
 
-require('should');
+var assert = require('assert');
 var file = require('..');
 
 describe('file.recurse():', function () {
@@ -28,6 +28,6 @@ describe('file.recurse():', function () {
       actual[abspath] = [rootdir, subdir, filename];
     });
 
-    actual.should.eql(expected);
+    assert.deepEqual(actual, expected);
   });
 });

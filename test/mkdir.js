@@ -7,7 +7,7 @@
 
 'use strict';
 
-require('should');
+var assert = require('assert');
 var fs = require('fs');
 var path = require('path');
 var file = require('..');
@@ -21,40 +21,40 @@ describe('.mkdir():', function () {
   });
 
   it('should not explode when a directory already exists:', function () {
-    (function () {
+    assert.doesNotThrow(function () {
       file.mkdir(__dirname + '/temp/');
-    }).should.not.throw();
+    });
   });
 
   it('filepath should still exist.', function () {
-    fs.existsSync(__dirname + '/temp/').should.be.true;
+    assert.equal(fs.existsSync(__dirname + '/temp/'), true);
   });
 
   it('should not explode when a directory does NOT already exists:', function () {
-    (function () {
+    assert.doesNotThrow(function () {
       file.mkdir(__dirname + '/temp/aa/bb/cc');
-    }).should.not.throw();
+    });
   });
 
   it('filepath should still exist.', function () {
-    fs.existsSync(__dirname + '/temp/aa/bb/cc').should.be.true;
+    assert.equal(fs.existsSync(__dirname + '/temp/aa/bb/cc'), true);
   });
 
   it('should not explode when a directory does NOT already exists:', function () {
-    (function () {
+    assert.doesNotThrow(function () {
       file.mkdir(__dirname + '/temp/aa/bb/cc');
-    }).should.not.throw();
+    });
   });
 
   it('filepath should still exist.', function () {
-    fs.existsSync(__dirname + '/temp/aa/bb/cc').should.be.true;
+    assert.equal(fs.existsSync(__dirname + '/temp/aa/bb/cc'), true);
   });
 
   it('should throw if a path cannot be created (ENOTDIR).', function () {
     fs.writeFileSync(path.join(__dirname + '/temp/aa/bb/xx'), 'test');
 
-    (function () {
+    assert.throws(function () {
       file.mkdir(path.join(__dirname + '/temp/aa/bb/xx/yy'));
-    }).should.throw();
+    }, Error);
   });
 });

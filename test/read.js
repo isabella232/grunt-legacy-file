@@ -7,7 +7,7 @@
 
 'use strict';
 
-require('should');
+var assert = require('assert');
 var fs = require('fs');
 var file = require('..');
 var utils = require('./utils');
@@ -30,60 +30,60 @@ describe('.read():', function () {
 
   describe('encoding:', function () {
     it('should read files as utf8 by default.', function () {
-      file.read('test/fixtures/utf8.txt').should.equal(string);
+      assert.equal(file.read('test/fixtures/utf8.txt'), string);
     });
     it('should read a file using the specified encoding.', function () {
-      file.read('test/fixtures/iso-8859-1.txt', {encoding: 'iso-8859-1'}).should.equal(string);
+      assert.equal(file.read('test/fixtures/iso-8859-1.txt', {encoding: 'iso-8859-1'}), string);
     });
     it('should read as a buffer if encoding is specified as null.', function () {
       var a = file.read('test/fixtures/octocat.png', {encoding: null });
       var b = fs.readFileSync('test/fixtures/octocat.png');
-      utils.compareBuffers(a, b);
+      assert.equal(utils.compareBuffers(a, b), true);
     });
   });
 
   describe('BOM:', function () {
     it('should strip BOM (byte order marks).', function () {
-      file.read('test/fixtures/BOM.txt').should.equal('foo');
+      assert.equal(file.read('test/fixtures/BOM.txt'), 'foo');
     });
     it('should preserve byte order marks when `preserveBOM` is enabled.', function () {
       file.preserveBOM = true;
-      file.read('test/fixtures/BOM.txt').should.equal('\ufeff' + 'foo');
+      assert.equal(file.read('test/fixtures/BOM.txt'), '\ufeff' + 'foo');
     });
     it('should strip byte order marks when `preserveBOM` is disabled.', function () {
       file.preserveBOM = false;
-      file.read('test/fixtures/BOM.txt').should.equal('foo');
+      assert.equal(file.read('test/fixtures/BOM.txt'), 'foo');
     });
     it('should work when the encoding is changed.', function () {
       file.preserveBOM = false;
       file.defaultEncoding = 'iso-8859-1';
-      file.read('test/fixtures/iso-8859-1.txt').should.equal(string);
+      assert.equal(file.read('test/fixtures/iso-8859-1.txt'), string);
     });
   });
 
   describe('.readJSON():', function () {
     it('file should be read as utf8 by default and parsed correctly.', function () {
-      file.readJSON('test/fixtures/utf8.json').should.eql(object);
+      assert.deepEqual(file.readJSON('test/fixtures/utf8.json'), object);
     });
     it('should read files using the user-defined encoding.', function () {
-      file.readJSON('test/fixtures/iso-8859-1.json', {encoding: 'iso-8859-1'}).should.eql(object);
+      assert.deepEqual(file.readJSON('test/fixtures/iso-8859-1.json', {encoding: 'iso-8859-1'}), object);
     });
     it('should allow encoding to be changed.', function () {
       file.defaultEncoding = 'iso-8859-1';
-      file.readJSON('test/fixtures/iso-8859-1.json').should.eql(object);
+      assert.deepEqual(file.readJSON('test/fixtures/iso-8859-1.json'), object);
     });
   });
 
   describe('.readYAML():', function () {
     it('file should be read as utf8 by default and parsed correctly.', function () {
-      file.readYAML('test/fixtures/utf8.yaml').should.eql(object);
+      assert.deepEqual(file.readYAML('test/fixtures/utf8.yaml'), object);
     });
     it('should read files using the user-defined encoding.', function () {
-      file.readYAML('test/fixtures/iso-8859-1.yaml', {encoding: 'iso-8859-1'}).should.eql(object);
+      assert.deepEqual(file.readYAML('test/fixtures/iso-8859-1.yaml', {encoding: 'iso-8859-1'}), object);
     });
     it('should allow encoding to be changed.', function () {
       file.defaultEncoding = 'iso-8859-1';
-      file.readYAML('test/fixtures/iso-8859-1.yaml').should.eql(object);
+      assert.deepEqual(file.readYAML('test/fixtures/iso-8859-1.yaml'), object);
     });
   });
 });

@@ -7,7 +7,7 @@
 
 'use strict';
 
-require('should');
+var assert = require('assert');
 var fs = require('fs');
 var path = require('path');
 var grunt = require('grunt');
@@ -32,14 +32,14 @@ describe('.write():', function () {
   it('file should be written as utf8 by default.', function () {
     var tempfile = new Tempfile();
     file.write(tempfile.path, string);
-    fs.readFileSync(tempfile.path, 'utf8').should.equal(string);
+    assert.equal(fs.readFileSync(tempfile.path, 'utf8'), string);
     tempfile.unlinkSync();
   });
 
   it('should write a file using default encoding', function () {
     var tempfile = new Tempfile();
     file.write(tempfile.path, string, {encoding: 'iso-8859-1'});
-    file.read(tempfile.path, {encoding: 'iso-8859-1'}).should.equal(string);
+    assert.equal(file.read(tempfile.path, {encoding: 'iso-8859-1'}), string);
     tempfile.unlinkSync();
   });
 
@@ -48,7 +48,7 @@ describe('.write():', function () {
     var tempfile = new Tempfile();
     file.write(tempfile.path, string);
     file.defaultEncoding = 'utf8';
-    file.read(tempfile.path, {encoding: 'iso-8859-1'}).should.eql(string);
+    assert.equal(file.read(tempfile.path, {encoding: 'iso-8859-1'}), string);
     tempfile.unlinkSync();
   });
 
@@ -56,7 +56,7 @@ describe('.write():', function () {
     var tempfile = new Tempfile();
     var octocat = fs.readFileSync('test/fixtures/octocat.png');
     file.write(tempfile.path, octocat);
-    utils.compareBuffers(fs.readFileSync(tempfile.path), octocat).should.be.true;
+    assert.equal(utils.compareBuffers(fs.readFileSync(tempfile.path), octocat), true);
     tempfile.unlinkSync();
   });
 
@@ -65,7 +65,7 @@ describe('.write():', function () {
     grunt.option('write', false);
     var filepath = path.join(tempdir.path, 'should-not-exist.txt');
     file.write(filepath, 'test');
-    file.exists(filepath).should.be.false;
+    assert.notEqual(file.exists(filepath), true);
   });
 });
 
