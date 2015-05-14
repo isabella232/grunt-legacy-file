@@ -1,13 +1,12 @@
 /*!
- * grunt-legacy-file <http://gruntjs.com/grunt-legacy-file>
+ * grunt <http://gruntjs.com/>
  *
- * Copyright (c) 2015, "Cowboy" Ben Alman.
+ * Copyright (c) 2013-2015 "Cowboy" Ben Alman.
  * Licensed under the MIT license.
  */
 
 'use strict';
 
-require('should');
 var path = require('path');
 var grunt = require('grunt');
 var assert = require('assert');
@@ -17,10 +16,7 @@ var tempdir = new Tempdir();
 var utils = require('./utils');
 var file = require('..');
 
-
 describe('.copy():', function () {
-  var string = 'Ação é isso aí\n';
-  var object = {foo: 'Ação é isso aí', bar: ['ømg', 'pønies']};
   var defaultEncoding;
   var tempfile;
 
@@ -68,7 +64,6 @@ describe('.copy():', function () {
 
   describe('options.process:', function () {
     var string = 'Ação é isso aí\n';
-    var object = {foo: 'Ação é isso aí', bar: ['ømg', 'pønies']};
     var defaultEncoding;
     var tempfile;
 
@@ -88,8 +83,8 @@ describe('.copy():', function () {
       it('should expose the source file contents as the first parameter:', function () {
         tempfile = new Tempfile();
         file.copy('test/fixtures/utf8.txt', tempfile.path, {
-          process: function (contents, src, dest) {
-            contents.should.equal(string);
+          process: function (contents) {
+            assert.equal(contents, string, true);
             return 'føø' + contents + 'bår';
           }
         });
@@ -99,9 +94,9 @@ describe('.copy():', function () {
       it('should expose the source file path as the second parameter:', function () {
         tempfile = new Tempfile();
         file.copy('test/fixtures/utf8.txt', tempfile.path, {
-          process: function (contents, src, dest) {
-            src.should.equal('test/fixtures/utf8.txt');
-            contents.should.equal(string);
+          process: function (contents, src) {
+            assert.equal(src, 'test/fixtures/utf8.txt');
+            assert.equal(contents, string, true);
             return 'føø' + contents + 'bår';
           }
         });
@@ -112,8 +107,8 @@ describe('.copy():', function () {
         tempfile = new Tempfile();
         file.copy('test/fixtures/utf8.txt', tempfile.path, {
           process: function (contents, src, dest) {
-            dest.should.equal(tempfile.path);
-            contents.should.equal(string);
+            assert.equal(dest, tempfile.path, true);
+            assert.equal(contents, string, true);
             return 'føø' + contents + 'bår';
           }
         });
@@ -123,34 +118,23 @@ describe('.copy():', function () {
 
     describe('copy and process', function() {
       var tempfile;
-      it('srcpath should be passed in, as-specified.', function () {
+      it('src should be passed in, as-specified.', function () {
         tempfile = new Tempfile();
         file.copy('test/fixtures/utf8.txt', tempfile.path, {
-          process: function(src, srcpath, destpath) {
-            assert.equal(srcpath, 'test/fixtures/utf8.txt', true);
-            return 'føø' + src + 'bår';
+          process: function(contents, src) {
+            assert.equal(src, 'test/fixtures/utf8.txt', true);
+            return 'føø' + contents + 'bår';
           }
         });
         tempfile.unlinkSync();
       });
 
-      it('destpath should be passed in, as-specified.', function () {
+      it('dest should be passed in, as-specified.', function () {
         tempfile = new Tempfile();
         file.copy('test/fixtures/utf8.txt', tempfile.path, {
-          process: function(src, srcpath, destpath) {
-            assert.equal(destpath, tempfile.path, true);
-            return 'føø' + src + 'bår';
-          }
-        });
-        tempfile.unlinkSync();
-      });
-
-      it('when no encoding is specified, use default encoding and process src as a string', function () {
-        tempfile = new Tempfile();
-        file.copy('test/fixtures/utf8.txt', tempfile.path, {
-          process: function(src, srcpath, destpath) {
-            assert.equal(Buffer.isBuffer(src), false);
-            return 'føø' + src + 'bår';
+          process: function(contents, src, dest) {
+            assert.equal(dest, tempfile.path, true);
+            return 'føø' + contents + 'bår';
           }
         });
         tempfile.unlinkSync();
@@ -159,8 +143,19 @@ describe('.copy():', function () {
       it('when no encoding is specified, use default encoding and process src as a string', function () {
         tempfile = new Tempfile();
         file.copy('test/fixtures/utf8.txt', tempfile.path, {
-          process: function(contents, srcpath, destpath) {
-            assert.equal(typeof contents, 'string', true);
+          process: function(contents) {
+            assert.notEqual(Buffer.isBuffer(contents));
+            return 'føø' + contents + 'bår';
+          }
+        });
+        tempfile.unlinkSync();
+      });
+
+      it('when no encoding is specified, use default encoding and process src as a string', function () {
+        tempfile = new Tempfile();
+        file.copy('test/fixtures/utf8.txt', tempfile.path, {
+          process: function(contents) {
+            assert.equal(typeof contents, 'string');
             return 'føø' + contents + 'bår';
           }
         });
@@ -170,11 +165,11 @@ describe('.copy():', function () {
       it('file should be saved as properly encoded processed string.', function () {
         tempfile = new Tempfile();
         file.copy('test/fixtures/utf8.txt', tempfile.path, {
-          process: function(contents, srcpath, destpath) {
+          process: function(contents) {
             return 'føø' + contents + 'bår';
           }
         });
-        assert.equal(file.read(tempfile.path), 'føø' + string + 'bår', true);
+        assert.equal(file.read(tempfile.path), 'føø' + string + 'bår');
         tempfile.unlinkSync();
       });
 
@@ -182,10 +177,10 @@ describe('.copy():', function () {
         tempfile = new Tempfile();
         file.copy('test/fixtures/iso-8859-1.txt', tempfile.path, {
           encoding: 'iso-8859-1',
-          process: function(src) {
-            assert.equal(Buffer.isBuffer(src), false);
-            assert.equal(typeof src, 'string', true);
-            return 'føø' + src + 'bår';
+          process: function(contents) {
+            assert.equal(Buffer.isBuffer(contents), false);
+            assert.equal(typeof contents, 'string');
+            return 'føø' + contents + 'bår';
           }
         });
         tempfile.unlinkSync();
@@ -195,21 +190,21 @@ describe('.copy():', function () {
         tempfile = new Tempfile();
         file.copy('test/fixtures/iso-8859-1.txt', tempfile.path, {
           encoding: 'iso-8859-1',
-          process: function(src) {
-            return 'føø' + src + 'bår';
+          process: function(contents) {
+            return 'føø' + contents + 'bår';
           }
         });
-        assert.equal(file.read(tempfile.path, {encoding: 'iso-8859-1'}), 'føø' + string + 'bår', true);
+        assert.equal(file.read(tempfile.path, {encoding: 'iso-8859-1'}), 'føø' + string + 'bår');
         tempfile.unlinkSync();
       });
 
-      it('when encoding is specified as null, process src as a buffer', function () {
+      it('when encoding is specified as null, process `contents` as a buffer', function () {
         tempfile = new Tempfile();
         file.copy('test/fixtures/utf8.txt', tempfile.path, {
           encoding: null,
-          process: function(src) {
-            assert.equal(Buffer.isBuffer(src), true);
-            return new Buffer('føø' + src.toString() + 'bår');
+          process: function(contents) {
+            assert.equal(Buffer.isBuffer(contents), true);
+            return new Buffer('føø' + contents.toString() + 'bår');
           }
         });
         tempfile.unlinkSync();
@@ -219,22 +214,22 @@ describe('.copy():', function () {
         tempfile = new Tempfile();
         file.copy('test/fixtures/utf8.txt', tempfile.path, {
           encoding: null,
-          process: function(src) {
-            return new Buffer('føø' + src.toString() + 'bår');
+          process: function(contents) {
+            return new Buffer('føø' + contents.toString() + 'bår');
           }
         });
-        assert.equal(file.read(tempfile.path), 'føø' + string + 'bår', true);
+        assert.equal(file.read(tempfile.path), 'føø' + string + 'bår');
         tempfile.unlinkSync();
       });
 
-      it('use non-utf8 default encoding and process src as a string', function() {
+      it('use non-utf8 default encoding and process `contents` as a string', function() {
         file.defaultEncoding = 'iso-8859-1';
         tempfile = new Tempfile();
         file.copy('test/fixtures/iso-8859-1.txt', tempfile.path, {
-          process: function(src) {
-            assert.equal(Buffer.isBuffer(src), false);
-            assert.equal(typeof src, 'string', true);
-            return 'føø' + src + 'bår';
+          process: function(contents) {
+            assert.notEqual(Buffer.isBuffer(contents), true);
+            assert.equal(typeof contents, 'string');
+            return 'føø' + contents + 'bår';
           }
         });
         tempfile.unlinkSync();
@@ -244,11 +239,11 @@ describe('.copy():', function () {
         file.defaultEncoding = 'iso-8859-1';
         tempfile = new Tempfile();
         file.copy('test/fixtures/iso-8859-1.txt', tempfile.path, {
-          process: function(src) {
-            return 'føø' + src + 'bår';
+          process: function(contents) {
+            return 'føø' + contents + 'bår';
           }
         });
-        assert.equal(file.read(tempfile.path), 'føø' + string + 'bår', true);
+        assert.equal(file.read(tempfile.path), 'føø' + string + 'bår');
         tempfile.unlinkSync();
       });
 
@@ -260,7 +255,7 @@ describe('.copy():', function () {
             return false;
           }
         });
-        assert.equal(file.exists(filepath), false);
+        assert.notEqual(file.exists(filepath), true);
       });
     });
 
@@ -269,12 +264,12 @@ describe('.copy():', function () {
         tempfile = new Tempfile();
         file.copy('test/fixtures/utf8.txt', tempfile.path, {
           noProcess: true,
-          process: function (src) {
-            return 'føø' + src + 'bår';
+          process: function (contents) {
+            return 'føø' + contents + 'bår';
           }
         });
 
-        file.read(tempfile.path).should.equal(string);
+        assert.equal(file.read(tempfile.path), string);
         tempfile.unlinkSync();
       });
 
@@ -287,15 +282,15 @@ describe('.copy():', function () {
 
           file.copy(fp, tempfile.path, {
             noProcess: ['**/*no*'],
-            process: function (src) {
-              return 'føø' + src + 'bår';
+            process: function (contents) {
+              return 'føø' + contents + 'bår';
             }
           });
 
           if (filename === 'process') {
-            file.read(tempfile.path).should.equal('føø' + string + 'bår');
+            assert.equal(file.read(tempfile.path), 'føø' + string + 'bår');
           } else {
-            file.read(tempfile.path).should.equal(string);
+            assert.equal(file.read(tempfile.path), string);
           }
           tempfile.unlinkSync();
         });
@@ -308,10 +303,10 @@ describe('.copy():', function () {
 
       it('should copy directories recursively:', function () {
         file.copy('test/fixtures/expand/', copyroot1);
-        file.recurse('test/fixtures/expand/', function (srcpath, rootdir, subdir, filename) {
-          var destpath = path.join(copyroot1, subdir || '', filename);
-          file.isFile(srcpath).should.be.true;
-          file.read(srcpath).should.equal(file.read(destpath));
+        file.recurse('test/fixtures/expand/', function (src, rootdir, subdir, filename) {
+          var dest = path.join(copyroot1, subdir || '', filename);
+          assert.equal(file.isFile(src), true);
+          assert.equal(file.read(src), file.read(dest));
         });
       });
 
@@ -323,15 +318,15 @@ describe('.copy():', function () {
             return '<' + contents + '>';
           }
         });
-        file.isDir(path.join(copyroot2, 'empty')).should.be.true;
-        file.isDir(path.join(copyroot2, 'deep/deeper/empty')).should.be.true;
+        assert.equal(file.isDir(path.join(copyroot2, 'empty')), true);
+        assert.equal(file.isDir(path.join(copyroot2, 'deep/deeper/empty')), true);
       });
 
       it('file contents should be processed correctly.', function () {
-        file.recurse('test/fixtures/expand/', function (srcpath, rootdir, subdir, filename) {
-          var destpath = path.join(copyroot2, subdir || '', filename);
-          file.isFile(srcpath).should.be.true;
-          assert.equal('<' + file.read(srcpath) + '>', file.read(destpath));
+        file.recurse('test/fixtures/expand/', function (src, rootdir, subdir, filename) {
+          var dest = path.join(copyroot2, subdir || '', filename);
+          assert.equal(file.isFile(src), true);
+          assert.equal('<' + file.read(src) + '>', file.read(dest));
         });
       });
     });
