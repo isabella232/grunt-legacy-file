@@ -1,14 +1,14 @@
 /*!
- * grunt-legacy-file <http://gruntjs.com/grunt-legacy-file>
+ * grunt <http://gruntjs.com/>
  *
- * Copyright (c) 2015, "Cowboy" Ben Alman.
+ * Copyright (c) 2013-2015 "Cowboy" Ben Alman.
  * Licensed under the MIT license.
  */
 
 'use strict';
 
 /* deps: mocha temporary */
-require('should');
+var assert = require('assert');
 var fs = require('fs');
 var path = require('path');
 var grunt = require('grunt');
@@ -63,21 +63,21 @@ describe('file.delete():', function () {
     });
 
     it('should return true after deleting file.', function () {
-      file.delete(cwd).should.be.ok;
+      assert.equal(file.delete(cwd), true);
     });
 
     it('file should have been deleted.', function () {
-      file.exists(cwd).should.not.be.ok;
+      assert.equal(file.exists(cwd), false);
     });
 
     it('should return false when attempting to delete a nonexistent file.', function () {
-      file.delete('nonexistent').should.not.be.ok;
+      assert.equal(file.delete('nonexistent'), false);
     });
 
     it('should issue a warning when attempting to delete a nonexistent file', function () {
       this.resetWarnCount();
-      file.delete('nonexistent').should.not.be.ok;
-      this.warnCount.should.be.ok;
+      assert.equal(file.delete('nonexistent'), false);
+      assert.equal(this.warnCount, true);
     });
   });
 
@@ -99,21 +99,21 @@ describe('file.delete():', function () {
     });
 
     it('should not delete anything outside the cwd by default:', function () {
-      file.delete(path.join(outsidecwd, 'test.js')).should.not.be.ok;
+     assert.equal(file.delete(path.join(outsidecwd, 'test.js')), false);
     });
 
     it('should issue a warning when deleting outside the cwd:', function () {
-      file.delete(path.join(outsidecwd, 'test.js')).should.not.be.ok;
-      this.warnCount.should.equal(1);
+      assert.equal(file.delete(path.join(outsidecwd, 'test.js')), false);
+      assert.equal(this.warnCount, 1);
     });
 
     it('should delete outside cwd when using the --force:', function () {
-      file.delete(path.join(outsidecwd), {force: true }).should.be.ok;
+      assert.equal(file.delete(path.join(outsidecwd), {force: true }), true);
     });
 
     it('file outside cwd should have been deleted when using the --force:', function () {
       file.delete(path.join(outsidecwd), {force: true });
-      file.exists(outsidecwd).should.be.false;
+      assert.equal(file.exists(outsidecwd), false);
     });
   });
 
@@ -129,18 +129,18 @@ describe('file.delete():', function () {
 
     it('should not delete the cwd:', function () {
       this.resetWarnCount();
-      file.delete(cwd).should.not.be.ok;
+      assert.notEqual(file.delete(cwd), true);
     });
 
     it('should issue a warning when trying to delete cwd:', function () {
       this.resetWarnCount();
       file.delete(cwd);
-      this.warnCount.should.equal(1);
+      assert.equal(this.warnCount, 1);
     });
 
     it('the cwd should exist after trying to delete it:', function () {
       file.delete(cwd);
-      file.exists(cwd).should.be.true;
+      assert.equal(file.exists(cwd), true);
     });
   });
 
@@ -157,12 +157,12 @@ describe('file.delete():', function () {
     });
 
     it('should not delete when the `nowrite` option is enabled (but still return `true`):', function () {
-      file.delete(cwd).should.be.true;
+      assert.equal(file.delete(cwd), true);
     });
 
     it('file should still exist if `--no-write` was specified.', function () {
       file.delete(cwd);
-      file.exists(cwd).should.be.true;
+      assert.equal(file.exists(cwd), true);
     });
   });
 });

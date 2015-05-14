@@ -1,13 +1,13 @@
 /*!
- * grunt-legacy-file <http://gruntjs.com/grunt-legacy-file>
+ * grunt <http://gruntjs.com/>
  *
- * Copyright (c) 2015, "Cowboy" Ben Alman.
+ * Copyright (c) 2013-2015 "Cowboy" Ben Alman.
  * Licensed under the MIT license.
  */
 
 'use strict';
 
-require('should');
+var assert = require('assert');
 var fs = require('fs');
 var path = require('path');
 var Tempdir = require('temporary/lib/dir');
@@ -19,25 +19,25 @@ fs.symlinkSync(path.resolve('test/fixtures/expand'), path.join(tempdir.path, 'ex
 
 describe('file.exists():', function () {
   it('should return `true` when a file exists:', function () {
-    file.exists('test/fixtures/octocat.png').should.be.true;
+    assert.equal(file.exists('test/fixtures/octocat.png'), true);
   });
   it('should work for paths passes as segments:', function () {
-    file.exists('test', 'fixtures', 'octocat.png').should.be.true;
+    assert.equal(file.exists('test', 'fixtures', 'octocat.png'), true);
   });
   it('should work for directories:', function () {
-    file.exists('test/fixtures').should.be.true;
+    assert.equal(file.exists('test/fixtures'), true);
   });
   it('should work for file symlinks:', function () {
-    file.exists(path.join(tempdir.path, 'octocat.png')).should.be.true;
+    assert.equal(file.exists(path.join(tempdir.path, 'octocat.png')), true);
   });
   it('should work for directory symlinks:', function () {
-    file.exists(path.join(tempdir.path, 'expand')).should.be.true;
+    assert.equal(file.exists(path.join(tempdir.path, 'expand')), true);
   });
 
   it('should return `false` when a file does not exist:', function () {
-    file.exists('test/fixtures/does/not/exist/fooo.js').should.be.false;
+    assert.notEqual(file.exists('test/fixtures/does/not/exist/fooo.js'), true);
   });
   it('should return `false` when a directory does not exist:', function () {
-    file.exists('test/fixtures/does/not/exist').should.be.false;
+    assert.notEqual(file.exists('test/fixtures/does/not/exist'), true);
   });
 });

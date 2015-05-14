@@ -1,13 +1,13 @@
 /*!
- * grunt-legacy-file <http://gruntjs.com/grunt-legacy-file>
+ * grunt <http://gruntjs.com/>
  *
- * Copyright (c) 2015, "Cowboy" Ben Alman.
+ * Copyright (c) 2013-2015 "Cowboy" Ben Alman.
  * Licensed under the MIT license.
  */
 
 'use strict';
 
-require('should');
+var assert = require('assert');
 var fs = require('fs');
 var path = require('path');
 var Tempdir = require('temporary/lib/dir');
@@ -31,29 +31,29 @@ describe('file.expand():', function () {
 
   describe('basic matching:', function () {
     it('should match:', function () {
-      file.expand('**/*.js').should.eql(['js/bar.js', 'js/foo.js'], 'should match.');
-      file.expand('**/*.js', '**/*.css').should.eql(['js/bar.js', 'js/foo.js', 'css/baz.css', 'css/qux.css'], 'should match.');
-      file.expand(['**/*.js', '**/*.css']).should.eql(['js/bar.js', 'js/foo.js', 'css/baz.css', 'css/qux.css'], 'should match.');
-      file.expand('**d*/**').should.eql(['deep', 'deep/deep.txt', 'deep/deeper', 'deep/deeper/deeper.txt', 'deep/deeper/deepest', 'deep/deeper/deepest/deepest.txt'], 'should match files and directories.');
-      file.expand('**d*/**/').should.eql(['deep/', 'deep/deeper/', 'deep/deeper/deepest/'], 'should match directories, arbitrary / at the end appears in matches.');
+      assert.deepEqual(file.expand('**/*.js'), ['js/bar.js', 'js/foo.js'], 'should match.');
+      assert.deepEqual(file.expand('**/*.js', '**/*.css'), ['js/bar.js', 'js/foo.js', 'css/baz.css', 'css/qux.css'], 'should match.');
+      assert.deepEqual(file.expand(['**/*.js', '**/*.css']), ['js/bar.js', 'js/foo.js', 'css/baz.css', 'css/qux.css'], 'should match.');
+      assert.deepEqual(file.expand('**d*/**'), ['deep', 'deep/deep.txt', 'deep/deeper', 'deep/deeper/deeper.txt', 'deep/deeper/deepest', 'deep/deeper/deepest/deepest.txt'], 'should match files and directories.');
+      assert.deepEqual(file.expand('**d*/**/'), ['deep/', 'deep/deeper/', 'deep/deeper/deepest/'], 'should match directories, arbitrary / at the end appears in matches.');
     });
     it('should fail to match.', function () {
-      file.expand('*.xyz').should.eql([]);
+      assert.deepEqual(file.expand('*.xyz'), []);
     });
   });
 
   describe('unique results:', function () {
     it('file list should be uniqed.', function () {
-      file.expand('**/*.js', 'js/*.js').should.eql(['js/bar.js', 'js/foo.js']);
-      file.expand('**/*.js', '**/*.css', 'js/*.js').should.eql(['js/bar.js', 'js/foo.js', 'css/baz.css', 'css/qux.css']);
+      assert.deepEqual(file.expand('**/*.js', 'js/*.js'), ['js/bar.js', 'js/foo.js']);
+      assert.deepEqual(file.expand('**/*.js', '**/*.css', 'js/*.js'), ['js/bar.js', 'js/foo.js', 'css/baz.css', 'css/qux.css']);
     });
 
     it('mixed non-ending-/ and ending-/ dirs will not be uniqed by default.', function () {
-      file.expand('js', 'js/').should.eql(['js', 'js/']);
+      assert.deepEqual(file.expand('js', 'js/'), ['js', 'js/']);
     });
 
     it('mixed non-ending-/ and ending-/ dirs will be uniqed when `mark` is enabled.', function () {
-      file.expand({ mark: true }, 'js', 'js/').should.eql(['js/']);
+      assert.deepEqual(file.expand({ mark: true }, 'js', 'js/'), ['js/']);
     });
   });
 
@@ -62,27 +62,27 @@ describe('file.expand():', function () {
     it('should select 4 files in this order, by default.', function () {
       actual = file.expand('**/*.{js,css}');
       expected = ['css/baz.css', 'css/qux.css', 'js/bar.js', 'js/foo.js'];
-      actual.should.eql(expected);
+      assert.deepEqual(actual, expected);
     });
     it('specifically-specified-up-front file order should be maintained.', function () {
       actual = file.expand('js/foo.js', 'js/bar.js', '**/*.{js,css}');
       expected = ['js/foo.js', 'js/bar.js', 'css/baz.css', 'css/qux.css'];
-      actual.should.eql(expected);
+      assert.deepEqual(actual, expected);
     });
     it('specifically-specified-up-front file order should be maintained.', function () {
       actual = file.expand('js/bar.js', 'js/foo.js', '**/*.{js,css}');
       expected = ['js/bar.js', 'js/foo.js', 'css/baz.css', 'css/qux.css'];
-      actual.should.eql(expected);
+      assert.deepEqual(actual, expected);
     });
     it('if a file is excluded and then re-added, it should be added at the end.', function () {
       actual = file.expand('js/foo.js', '**/*.{js,css}', '!js/bar.js', 'js/bar.js');
       expected = ['js/foo.js', 'css/baz.css', 'css/qux.css', 'js/bar.js'];
-      actual.should.eql(expected);
+      assert.deepEqual(actual, expected);
     });
   });
 
   it('flatten:', function () {
-    file.expand([['**/*.js'], ['**/*.css', 'js/*.js'] ]).should.eql(['js/bar.js', 'js/foo.js', 'css/baz.css', 'css/qux.css'], 'should match.');
+    assert.deepEqual(file.expand([['**/*.js'], ['**/*.css', 'js/*.js'] ]), ['js/bar.js', 'js/foo.js', 'css/baz.css', 'css/qux.css'], 'should match.');
   });
 });
 
@@ -98,28 +98,28 @@ describe('exclusion:', function () {
   });
 
   it('solitary exclusion should match nothing', function() {
-    file.expand(['!js/*.js']).should.eql([]);
+    assert.deepEqual(file.expand(['!js/*.js']), []);
   });
   it('exclusion should cancel match', function() {
-    file.expand(['js/bar.js', '!js/bar.js']).should.eql([]);
+    assert.deepEqual(file.expand(['js/bar.js', '!js/bar.js']), []);
   });
   it('should omit single file from matched set', function() {
-    file.expand(['**/*.js', '!js/foo.js']).should.eql(['js/bar.js']);
+    assert.deepEqual(file.expand(['**/*.js', '!js/foo.js']), ['js/bar.js']);
   });
   it('inclusion / exclusion order matters', function() {
-    file.expand(['!js/foo.js', '**/*.js']).should.eql(['js/bar.js', 'js/foo.js']);
+    assert.deepEqual(file.expand(['!js/foo.js', '**/*.js']), ['js/bar.js', 'js/foo.js']);
   });
   it('multiple exclusions should be removed from the set', function() {
-    file.expand(['**/*.js', '**/*.css', '!js/bar.js', '!css/baz.css']).should.eql(['js/foo.js', 'css/qux.css']);
+    assert.deepEqual(file.expand(['**/*.js', '**/*.css', '!js/bar.js', '!css/baz.css']), ['js/foo.js', 'css/qux.css']);
   });
   it('excluded wildcards should be removed from the matched set', function() {
-    file.expand(['**/*.js', '**/*.css', '!**/*.css']).should.eql(['js/bar.js', 'js/foo.js']);
+    assert.deepEqual(file.expand(['**/*.js', '**/*.css', '!**/*.css']), ['js/bar.js', 'js/foo.js']);
   });
   it('different pattern for exclusion should still work', function() {
-    file.expand(['js/bar.js', 'js/foo.js', 'css/baz.css', 'css/qux.css', '!**/b*.*']).should.eql(['js/foo.js', 'css/qux.css']);
+    assert.deepEqual(file.expand(['js/bar.js', 'js/foo.js', 'css/baz.css', 'css/qux.css', '!**/b*.*']), ['js/foo.js', 'css/qux.css']);
   });
   it('should respect the order of inclusion / exclusion:', function () {
-    file.expand(['js/bar.js', '!**/b*.*', 'js/foo.js', 'css/baz.css', 'css/qux.css']).should.eql(['js/foo.js', 'css/baz.css', 'css/qux.css']);
+    assert.deepEqual(file.expand(['js/bar.js', '!**/b*.*', 'js/foo.js', 'css/baz.css', 'css/qux.css']), ['js/foo.js', 'css/baz.css', 'css/qux.css']);
   });
 });
 
@@ -136,52 +136,52 @@ describe('options:', function () {
 
   describe('options.mark (minimatch):', function () {
     it('should ensure that directories end in /', function () {
-      file.expand({mark: true }, '**d*/**').should.eql(['deep/', 'deep/deep.txt', 'deep/deeper/', 'deep/deeper/deeper.txt', 'deep/deeper/deepest/', 'deep/deeper/deepest/deepest.txt']);
+      assert.deepEqual(file.expand({mark: true }, '**d*/**'), ['deep/', 'deep/deep.txt', 'deep/deeper/', 'deep/deeper/deeper.txt', 'deep/deeper/deepest/', 'deep/deeper/deepest/deepest.txt']);
     });
 
     it('should match directories, arbitrary / at the end appears in matches.', function () {
-      file.expand({mark: true }, '**d*/**/').should.eql(['deep/', 'deep/deeper/', 'deep/deeper/deepest/']);
+      assert.deepEqual(file.expand({mark: true }, '**d*/**/'), ['deep/', 'deep/deeper/', 'deep/deeper/deepest/']);
     });
   });
 
   describe('options.filter:', function () {
     it('`isFile` should match files only.', function () {
-      file.expand({filter: 'isFile'}, '**d*/**').should.eql(['deep/deep.txt', 'deep/deeper/deeper.txt', 'deep/deeper/deepest/deepest.txt']);
+      assert.deepEqual(file.expand({filter: 'isFile'}, '**d*/**'), ['deep/deep.txt', 'deep/deeper/deeper.txt', 'deep/deeper/deepest/deepest.txt']);
     });
     it('`isDirectory` should match directories only.', function () {
-      file.expand({filter: 'isDirectory'}, '**d*/**').should.eql(['deep', 'deep/deeper', 'deep/deeper/deepest']);
+      assert.deepEqual(file.expand({filter: 'isDirectory'}, '**d*/**'), ['deep', 'deep/deeper', 'deep/deeper/deepest']);
     });
     it('should allow a custom filter function to be passed.', function () {
       function filter(fp) {
         return (/deepest/).test(fp);
       }
-      file.expand({filter: filter}, '**').should.eql(['deep/deeper/deepest', 'deep/deeper/deepest/deepest.txt', ]);
+      assert.deepEqual(file.expand({filter: filter}, '**'), ['deep/deeper/deepest', 'deep/deeper/deepest/deepest.txt', ]);
     });
     it('should not return files that fail to match.', function () {
-      file.expand({filter: 'isFile'}, 'js', 'css').should.eql([]);
+      assert.deepEqual(file.expand({filter: 'isFile'}, 'js', 'css'), []);
     });
     it('should not return directories that fail to match.', function () {
-      file.expand({filter: 'isDirectory'}, '**/*.js').should.eql([]);
+      assert.deepEqual(file.expand({filter: 'isDirectory'}, '**/*.js'), []);
     });
   });
 
   describe('options.matchBase:', function () {
     it('options.matchBase:', function () {
       var opts = {matchBase: true};
-      file.expand('*.js').should.eql([], 'should not matchBase (minimatch) by default.');
-      file.expand(opts, '*.js').should.eql(['js/bar.js', 'js/foo.js'], 'options should be passed through to minimatch.');
-      file.expand(opts, '*.js', '*.css').should.eql(['js/bar.js', 'js/foo.js', 'css/baz.css', 'css/qux.css'], 'should match.');
-      file.expand(opts, ['*.js', '*.css']).should.eql(['js/bar.js', 'js/foo.js', 'css/baz.css', 'css/qux.css'], 'should match.');
+      assert.deepEqual(file.expand('*.js'), [], 'should not matchBase (minimatch) by default.');
+      assert.deepEqual(file.expand(opts, '*.js'), ['js/bar.js', 'js/foo.js'], 'options should be passed through to minimatch.');
+      assert.deepEqual(file.expand(opts, '*.js', '*.css'), ['js/bar.js', 'js/foo.js', 'css/baz.css', 'css/qux.css'], 'should match.');
+      assert.deepEqual(file.expand(opts, ['*.js', '*.css']), ['js/bar.js', 'js/foo.js', 'css/baz.css', 'css/qux.css'], 'should match.');
     });
   });
 
   describe('options.cwd:', function () {
     it('options.cwd:', function () {
       var cwd = path.resolve(process.cwd(), '..');
-      file.expand({cwd: cwd}, ['expand/js', 'expand/js/*']).should.eql(['expand/js', 'expand/js/bar.js', 'expand/js/foo.js'], 'should match.');
-      file.expand({cwd: cwd, filter: 'isFile'}, ['expand/js', 'expand/js/*']).should.eql(['expand/js/bar.js', 'expand/js/foo.js'], 'should match.');
-      file.expand({cwd: cwd, filter: 'isDirectory'}, ['expand/js', 'expand/js/*']).should.eql(['expand/js'], 'should match.');
-      file.expand({cwd: cwd, filter: 'isFile'}, ['expand/js', 'expand/js/*', '!**/b*.js']).should.eql(['expand/js/foo.js'], 'should negate properly.');
+      assert.deepEqual(file.expand({cwd: cwd}, ['expand/js', 'expand/js/*']), ['expand/js', 'expand/js/bar.js', 'expand/js/foo.js'], 'should match.');
+      assert.deepEqual(file.expand({cwd: cwd, filter: 'isFile'}, ['expand/js', 'expand/js/*']), ['expand/js/bar.js', 'expand/js/foo.js'], 'should match.');
+      assert.deepEqual(file.expand({cwd: cwd, filter: 'isDirectory'}, ['expand/js', 'expand/js/*']), ['expand/js'], 'should match.');
+      assert.deepEqual(file.expand({cwd: cwd, filter: 'isFile'}, ['expand/js', 'expand/js/*', '!**/b*.js']), ['expand/js/foo.js'], 'should negate properly.');
     });
   });
 
@@ -189,8 +189,8 @@ describe('options:', function () {
     var opts = {nonull: true};
 
     it('should return non-matching glob patterns in the result set.', function () {
-      file.expand(opts, ['js/a*', 'js/b*', 'js/c*']).should.eql(['js/a*', 'js/bar.js', 'js/c*']);
-      file.expand(opts, ['js/foo.js', 'js/bar.js', 'js/baz.js']).should.eql(['js/foo.js', 'js/bar.js', 'js/baz.js']);
+      assert.deepEqual(file.expand(opts, ['js/a*', 'js/b*', 'js/c*']), ['js/a*', 'js/bar.js', 'js/c*']);
+      assert.deepEqual(file.expand(opts, ['js/foo.js', 'js/bar.js', 'js/baz.js']), ['js/foo.js', 'js/bar.js', 'js/baz.js']);
     });
   });
 });
