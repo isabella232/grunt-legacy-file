@@ -37,6 +37,7 @@
     "verb": "0.7.0"
   },
   "keywords": [
+    "grunt-legacy",
     "file",
     "fs",
     "grunt"

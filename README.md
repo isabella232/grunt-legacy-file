@@ -1,4 +1,4 @@
-# grunt-legacy-file [![NPM version](https://badge.fury.io/js/grunt-legacy-file.svg)](http://badge.fury.io/js/grunt-legacy-file)
+# grunt-legacy-file [![NPM version](https://badge.fury.io/js/grunt-legacy-file.svg)](http://badge.fury.io/js/grunt-legacy-file) [![Built with Grunt](https://cdn.gruntjs.com/builtwith.png)](http://gruntjs.com/)
 
 > Grunt's file methods.
 
@@ -42,6 +42,8 @@ _(loosely in this order...)_
 
 * [ ] replace core `grunt.file` internal module with `grunt-legacy-file`
 * [ ] remove any dependencies that are no longer needed from grunt.
+* [ ] enable travis
+* [ ] add travis badge
 
 ## Related projects
 
