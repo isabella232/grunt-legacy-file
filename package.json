@@ -7,17 +7,11 @@
     "name": "\"Cowboy\" Ben Alman",
     "url": "http://benalman.com/"
   },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/gruntjs/grunt-legacy-file.git"
-  },
+  "repository": "gruntjs/grunt-legacy-file",
   "bugs": {
     "url": "https://github.com/gruntjs/grunt-legacy-file/issues"
   },
-  "license": {
-    "type": "MIT",
-    "url": "https://github.com/gruntjs/grunt-legacy-file/blob/master/LICENSE"
-  },
+  "license": "MIT",
   "files": [
     "index.js"
   ],
@@ -39,7 +33,6 @@
   "devDependencies": {
     "grunt": "git://github.com/gruntjs/grunt#master",
     "mocha": "*",
-    "should": "*",
     "temporary": "0.0.8",
     "verb": "0.7.0"
   },
