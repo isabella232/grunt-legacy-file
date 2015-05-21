@@ -10,14 +10,20 @@
 var assert = require('assert');
 var fs = require('fs');
 var path = require('path');
+var grunt = require('grunt');
 var Tempdir = require('temporary/lib/dir');
 var tempdir = new Tempdir();
-var file = require('..');
+var File = require('..');
+var file;
 
 fs.symlinkSync(path.resolve('test/fixtures/octocat.png'), path.join(tempdir.path, 'octocat.png'), 'file');
 fs.symlinkSync(path.resolve('test/fixtures/expand'), path.join(tempdir.path, 'expand'), 'dir');
 
 describe('path:', function () {
+  beforeEach(function () {
+    file = new File({grunt: grunt});
+  });
+
   describe('.isPathAbsolute():', function () {
     it('should work for directories with a leading slash:', function () {
       assert.equal(file.isPathAbsolute(path.resolve('/foo')), true);

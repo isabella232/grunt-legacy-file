@@ -10,9 +10,11 @@
 var assert = require('assert');
 var fs = require('fs');
 var path = require('path');
+var grunt = require('grunt');
 var Tempdir = require('temporary/lib/dir');
 var tempdir = new Tempdir();
-var file = require('..');
+var File = require('..');
+var file;
 
 fs.symlinkSync(path.resolve('test/fixtures/octocat.png'), path.join(tempdir.path, 'octocat.png'), 'file');
 fs.symlinkSync(path.resolve('test/fixtures/expand'), path.join(tempdir.path, 'expand'), 'dir');
@@ -21,6 +23,7 @@ describe('file.expandMapping():', function () {
   var actual, expected;
 
   beforeEach(function (done) {
+    file = new File({grunt: grunt});
     this.cwd = process.cwd();
     process.chdir('test/fixtures');
     done();

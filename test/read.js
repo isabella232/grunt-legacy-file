@@ -9,8 +9,10 @@
 
 var assert = require('assert');
 var fs = require('fs');
-var file = require('..');
+var grunt = require('grunt');
 var utils = require('./utils');
+var File = require('..');
+var file;
 
 describe('.read():', function () {
   var string = 'Ação é isso aí\n';
@@ -18,6 +20,7 @@ describe('.read():', function () {
   var defaultEncoding;
 
   beforeEach(function (done) {
+    file = new File({grunt: grunt});
     defaultEncoding = file.defaultEncoding;
     file.defaultEncoding = 'utf8';
     done();

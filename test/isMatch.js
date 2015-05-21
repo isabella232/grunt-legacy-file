@@ -8,9 +8,15 @@
 'use strict';
 
 var assert = require('assert');
-var file = require('..');
+var grunt = require('grunt');
+var File = require('..');
+var file;
 
 describe('file.isMatch():', function () {
+  beforeEach(function () {
+    file = new File({grunt: grunt});
+  });
+
   it('basic matching:', function () {
     assert.equal(file.isMatch('*.js', 'foo.js'), true);
     assert.equal(file.isMatch('*.js', ['foo.js']), true);

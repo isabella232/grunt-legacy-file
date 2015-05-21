@@ -8,9 +8,15 @@
 'use strict';
 
 var assert = require('assert');
-var file = require('..');
+var grunt = require('grunt');
+var File = require('..');
+var file;
 
 describe('file.recurse():', function () {
+  beforeEach(function () {
+    file = new File({grunt: grunt});
+  });
+
   it('paths and arguments should match.', function () {
     var rootdir = 'test/fixtures/expand';
     var expected = {};

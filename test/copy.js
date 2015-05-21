@@ -14,13 +14,15 @@ var Tempfile = require('temporary/lib/file');
 var Tempdir = require('temporary/lib/dir');
 var tempdir = new Tempdir();
 var utils = require('./utils');
-var file = require('..');
+var File = require('..');
+var file;
 
 describe('.copy():', function () {
   var defaultEncoding;
   var tempfile;
 
   beforeEach(function (done) {
+    file = new File({grunt: grunt});
     defaultEncoding = file.defaultEncoding;
     file.defaultEncoding = 'utf8';
     done();

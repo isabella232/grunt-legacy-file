@@ -8,9 +8,15 @@
 'use strict';
 
 var assert = require('assert');
-var file = require('..');
+var grunt = require('grunt');
+var File = require('..');
+var file;
 
 describe('file.match():', function () {
+  beforeEach(function () {
+    file = new File({grunt: grunt});
+  });
+
   it('Should return empty set if a required argument is missing or an empty set.', function () {
     assert.deepEqual(file.match(null, null), []);
     assert.deepEqual(file.match({}, null, null), []);

@@ -14,13 +14,15 @@ var grunt = require('grunt');
 var Tempfile = require('temporary/lib/file');
 var Tempdir = require('temporary/lib/dir');
 var utils = require('./utils');
-var file = require('..');
+var File = require('..');
+var file;
 
 describe('.write():', function () {
   var string = 'Ação é isso aí\n';
   var defaultEncoding;
 
   beforeEach(function () {
+    file = new File({grunt: grunt});
     defaultEncoding = file.defaultEncoding;
     file.defaultEncoding = 'utf8';
   });

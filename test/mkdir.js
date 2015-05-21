@@ -10,10 +10,13 @@
 var assert = require('assert');
 var fs = require('fs');
 var path = require('path');
-var file = require('..');
+var grunt = require('grunt');
+var File = require('..');
+var file;
 
 describe('.mkdir():', function () {
   before(function () {
+    file = new File({grunt: grunt});
     file.mkdir(__dirname + '/temp');
   });
   after(function () {
