@@ -135,8 +135,6 @@ File.prototype._processPatterns = function(patterns, fn) {
  */
 
 File.prototype.match = function(options, patterns, filepaths) {
-  var self = this;
-
   if (this.options.grunt.util.kindOf(options) !== 'object') {
     filepaths = patterns;
     patterns = options;
@@ -151,8 +149,8 @@ File.prototype.match = function(options, patterns, filepaths) {
   if (patterns.length === 0 || filepaths.length === 0) { return []; }
   // Return all matching filepaths.
   return this._processPatterns(patterns, function(pattern) {
-    return self.minimatch.match(filepaths, pattern, options);
-  });
+    return this.minimatch.match(filepaths, pattern, options);
+  }.bind(this));
 };
 
 /**
@@ -180,7 +178,6 @@ File.prototype.isMatch = function() {
 
 File.prototype.expand = function() {
   var grunt = this.options.grunt;
-  var self = this;
   var args = grunt.util.toArray(arguments);
   // If the first argument is an options object, save those options to pass
   // into the file.glob.sync method.
@@ -193,8 +190,8 @@ File.prototype.expand = function() {
   // Return all matching filepaths.
   var matches = this._processPatterns(patterns, function(pattern) {
     // Find all matching files for this pattern.
-    return self.glob.sync(pattern, options);
-  });
+    return this.glob.sync(pattern, options);
+  }.bind(this));
   // Filter result set?
   if (options.filter) {
     matches = matches.filter(function(filepath) {
@@ -283,7 +280,6 @@ File.prototype.expandMapping = function(patterns, destBase, options) {
  */
 
 File.prototype.mkdir = function(dirpath, mode) {
-  var self = this;
   if (this.options.grunt.option('no-write')) { return; }
   // Set directory mode in a strict-mode-friendly way.
   if (mode == null) {
@@ -292,15 +288,15 @@ File.prototype.mkdir = function(dirpath, mode) {
   dirpath.split(pathSeparatorRe).reduce(function(parts, part) {
     parts += part + '/';
     var subpath = path.resolve(parts);
-    if (!self.exists(subpath)) {
+    if (!this.exists(subpath)) {
       try {
         fs.mkdirSync(subpath, mode);
       } catch (e) {
-        throw self.options.grunt.util.error('Unable to create directory "' + subpath + '" (Error code: ' + e.code + ').', e);
+        throw this.options.grunt.util.error('Unable to create directory "' + subpath + '" (Error code: ' + e.code + ').', e);
       }
     }
     return parts;
-  }, '');
+  }.bind(this), '');
 };
 
 /**
@@ -314,16 +310,15 @@ File.prototype.mkdir = function(dirpath, mode) {
  */
 
 File.prototype.recurse = function(rootdir, callback, subdir) {
-  var self = this;
   var abspath = subdir ? path.join(rootdir, subdir) : rootdir;
   fs.readdirSync(abspath).forEach(function(filename) {
     var filepath = path.join(abspath, filename);
     if (fs.statSync(filepath).isDirectory()) {
-      self.recurse(rootdir, callback, self._unixifyPath(path.join(subdir || '', filename || '')));
+      this.recurse(rootdir, callback, this._unixifyPath(path.join(subdir || '', filename || '')));
     } else {
-      callback(self._unixifyPath(filepath), rootdir, subdir, filename);
+      callback(this._unixifyPath(filepath), rootdir, subdir, filename);
     }
-  });
+  }.bind(this));
 };
 
 /**
@@ -474,15 +469,14 @@ File.prototype.write = function(filepath, contents, options) {
  */
 
 File.prototype.copy = function(srcpath, destpath, options) {
-  var self = this;
   if (this.isDir(srcpath)) {
     // Copy a directory, recursively.
     // Explicitly create new dest directory.
     this.mkdir(destpath);
     // Iterate over all sub-files/dirs, recursing.
     fs.readdirSync(srcpath).forEach(function(filepath) {
-      self.copy(path.join(srcpath, filepath), path.join(destpath, filepath), options);
-    });
+      this.copy(path.join(srcpath, filepath), path.join(destpath, filepath), options);
+    }.bind(this));
   } else {
     // Copy a single file.
     this._copy(srcpath, destpath, options);
