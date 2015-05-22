@@ -59,6 +59,22 @@ function File(options) {
 }
 
 /**
+ * Check for options through Grunt if specified, otherwise
+ * defer to options object properties.
+ *
+ * @param  {String} `name` The key of the option to get.
+ * @return {*}
+ */
+
+File.prototype.option = function(name) {
+  if (this.options.grunt && this.options.grunt.option) {
+    return this.options.grunt.option(name);
+  }
+  var no = name.match(/^no-(.+)$/);
+  return no ? !this.options[no[1]] : this.options[name];
+};
+
+/**
  * Expose `glob`
  */
 
@@ -287,7 +303,7 @@ File.prototype.expandMapping = function(patterns, destBase, options) {
  */
 
 File.prototype.mkdir = function(dirpath, mode) {
-  if (this.options.grunt.option('no-write')) { return; }
+  if (this.option('no-write')) { return; }
   // Set directory mode in a strict-mode-friendly way.
   if (mode == null) {
     mode = parseInt('0777', 8) & (~process.umask());
@@ -439,7 +455,7 @@ File.prototype.readYAML = function(filepath, options) {
 
 File.prototype.write = function(filepath, contents, options) {
   if (!options) { options = {}; }
-  var nowrite = this.options.grunt.option('no-write');
+  var nowrite = this.option('no-write');
   var grunt = this.options.grunt;
   grunt.verbose.write((nowrite ? 'Not actually writing ' : 'Writing ') + filepath + '...');
   // Create path, if necessary.
