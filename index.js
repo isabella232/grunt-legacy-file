@@ -16,7 +16,14 @@ var path = require('path');
 var YAML = require('js-yaml');
 var rimraf = require('rimraf');
 var iconv = require('iconv-lite');
+var kindOf = require('kind-of');
 var gruntUtil = require('grunt-legacy-util');
+var _ = require('lodash');
+
+/**
+ * Is the platform windows?
+ */
+
 var win32 = process.platform === 'win32';
 
 /**
@@ -106,7 +113,7 @@ File.prototype._processPatterns = function(patterns, fn) {
   // Filepaths to return.
   var result = [];
   // Iterate over flattened patterns array.
-  gruntUtil._.flatten(patterns).forEach(function(pattern) {
+  _.flatten(patterns).forEach(function(pattern) {
     // If the first character is ! it should be omitted
     var exclusion = pattern.indexOf('!') === 0;
     // If the pattern is an exclusion, remove the !
@@ -115,10 +122,10 @@ File.prototype._processPatterns = function(patterns, fn) {
     var matches = fn(pattern);
     if (exclusion) {
       // If an exclusion, remove matching files.
-      result = gruntUtil._.difference(result, matches);
+      result = _.difference(result, matches);
     } else {
       // Otherwise add matching files.
-      result = gruntUtil._.union(result, matches);
+      result = _.union(result, matches);
     }
   });
   return result;
@@ -135,7 +142,7 @@ File.prototype._processPatterns = function(patterns, fn) {
  */
 
 File.prototype.match = function(options, patterns, filepaths) {
-  if (gruntUtil.kindOf(options) !== 'object') {
+  if (kindOf(options) !== 'object') {
     filepaths = patterns;
     patterns = options;
     options = {};
@@ -177,10 +184,11 @@ File.prototype.isMatch = function() {
  */
 
 File.prototype.expand = function() {
-  var args = gruntUtil.toArray(arguments);
+  var args = _.toArray(arguments);
+
   // If the first argument is an options object, save those options to pass
   // into the file.glob.sync method.
-  var options = gruntUtil.kindOf(args[0]) === 'object' ? args.shift() : {};
+  var options = kindOf(args[0]) === 'object' ? args.shift() : {};
   // Use the first argument if it's an Array, otherwise convert the arguments
   // object to an array and use that.
   var patterns = Array.isArray(args[0]) ? args[0] : args;
@@ -227,7 +235,7 @@ File.prototype.expand = function() {
  */
 
 File.prototype.expandMapping = function(patterns, destBase, options) {
-  options = gruntUtil._.defaults({}, options, {
+  options = _.defaults({}, options, {
     extDot: 'first',
     rename: function(destBase, destPath) {
       return path.join(destBase || '', destPath);
