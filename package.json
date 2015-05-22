@@ -25,6 +25,7 @@
   "dependencies": {
     "findup-sync": "^0.2.1",
     "glob": "^5.0.5",
+    "grunt-legacy-log": "^0.1.1",
     "iconv-lite": "^0.4.8",
     "js-yaml": "^3.3.0",
     "kind-of": "^1.1.0",
@@ -40,7 +41,7 @@
     "jshint-stylish": "^1.0.2",
     "mocha": "*",
     "temporary": "0.0.8",
-    "verb": "0.7.0"
+    "verb": "^0.8.2"
   },
   "keywords": [
     "grunt-legacy",

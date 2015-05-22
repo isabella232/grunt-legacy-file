@@ -17,7 +17,8 @@ var YAML = require('js-yaml');
 var rimraf = require('rimraf');
 var iconv = require('iconv-lite');
 var kindOf = require('kind-of');
-var gruntUtil = require('grunt-legacy-util');
+var legacyLog = require('grunt-legacy-log');
+var legacyUtil = require('grunt-legacy-util');
 var _ = require('lodash');
 
 /**
@@ -56,23 +57,8 @@ var extDotRe = {
 function File(options) {
   this.options = options || {};
   this.options.grunt = this.options.grunt || require('grunt');
+  this.log = new legacyLog.Log({grunt: this.options.grunt});
 }
-
-/**
- * Check for options through Grunt if specified, otherwise
- * defer to options object properties.
- *
- * @param  {String} `name` The key of the option to get.
- * @return {*}
- */
-
-File.prototype.option = function(name) {
-  if (this.options.grunt && this.options.grunt.option) {
-    return this.options.grunt.option(name);
-  }
-  var no = name.match(/^no-(.+)$/);
-  return no ? !this.options[no[1]] : this.options[name];
-};
 
 /**
  * Expose `glob`
@@ -91,6 +77,22 @@ File.prototype.minimatch = require('minimatch');
  */
 
 File.prototype.findup = require('findup-sync');
+
+/**
+ * Check for options through Grunt if specified, otherwise
+ * defer to options object properties.
+ *
+ * @param  {String} `name` The key of the option to get.
+ * @return {*}
+ */
+
+File.prototype.option = function(name) {
+  if (this.options.grunt && this.options.grunt.option) {
+    return this.options.grunt.option(name);
+  }
+  var no = name.match(/^no-(.+)$/);
+  return no ? !this.options[no[1]] : this.options[name];
+};
 
 /**
  * Normalize all `\\` paths to unix-style (`/`) paths.
@@ -315,7 +317,7 @@ File.prototype.mkdir = function(dirpath, mode) {
       try {
         fs.mkdirSync(subpath, mode);
       } catch (e) {
-        throw gruntUtil.error('Unable to create directory "' + subpath + '" (Error code: ' + e.code + ').', e);
+        throw legacyUtil.error('Unable to create directory "' + subpath + '" (Error code: ' + e.code + ').', e);
       }
     }
     return parts;
@@ -374,9 +376,9 @@ File.prototype.preserveBOM = false;
 
 File.prototype.read = function(filepath, options) {
   if (!options) { options = {}; }
-  var grunt = this.options.grunt;
   var contents;
-  grunt.verbose.write('Reading ' + filepath + '...');
+
+  this.log.verbose.write('Reading ' + filepath + '...');
   try {
     contents = fs.readFileSync(String(filepath));
     // If encoding is not explicitly null, convert from encoded buffer to a
@@ -388,11 +390,11 @@ File.prototype.read = function(filepath, options) {
         contents = contents.substring(1);
       }
     }
-    grunt.verbose.ok();
+    this.log.verbose.ok();
     return contents;
   } catch (e) {
-    grunt.verbose.error();
-    throw gruntUtil.error('Unable to read "' + filepath + '" file (Error code: ' + e.code + ').', e);
+    this.log.verbose.error();
+    throw legacyUtil.error('Unable to read "' + filepath + '" file (Error code: ' + e.code + ').', e);
   }
 };
 
@@ -407,16 +409,15 @@ File.prototype.read = function(filepath, options) {
 
 File.prototype.readJSON = function(filepath, options) {
   var src = this.read(filepath, options);
-  var grunt = this.options.grunt;
   var result;
-  grunt.verbose.write('Parsing ' + filepath + '...');
+  this.log.verbose.write('Parsing ' + filepath + '...');
   try {
     result = JSON.parse(src);
-    grunt.verbose.ok();
+    this.log.verbose.ok();
     return result;
   } catch (e) {
-    grunt.verbose.error();
-    throw gruntUtil.error('Unable to parse "' + filepath + '" file (' + e.message + ').', e);
+    this.log.verbose.error();
+    throw legacyUtil.error('Unable to parse "' + filepath + '" file (' + e.message + ').', e);
   }
 };
 
@@ -431,16 +432,15 @@ File.prototype.readJSON = function(filepath, options) {
 
 File.prototype.readYAML = function(filepath, options) {
   var src = this.read(filepath, options);
-  var grunt = this.options.grunt;
   var result;
-  grunt.verbose.write('Parsing ' + filepath + '...');
+  this.log.verbose.write('Parsing ' + filepath + '...');
   try {
     result = YAML.load(src);
-    grunt.verbose.ok();
+    this.log.verbose.ok();
     return result;
   } catch (e) {
-    grunt.verbose.error();
-    throw gruntUtil.error('Unable to parse "' + filepath + '" file (' + e.problem + ').', e);
+    this.log.verbose.error();
+    throw legacyUtil.error('Unable to parse "' + filepath + '" file (' + e.problem + ').', e);
   }
 };
 
@@ -456,8 +456,7 @@ File.prototype.readYAML = function(filepath, options) {
 File.prototype.write = function(filepath, contents, options) {
   if (!options) { options = {}; }
   var nowrite = this.option('no-write');
-  var grunt = this.options.grunt;
-  grunt.verbose.write((nowrite ? 'Not actually writing ' : 'Writing ') + filepath + '...');
+  this.log.verbose.write((nowrite ? 'Not actually writing ' : 'Writing ') + filepath + '...');
   // Create path, if necessary.
   this.mkdir(path.dirname(filepath));
   try {
@@ -470,11 +469,11 @@ File.prototype.write = function(filepath, contents, options) {
     if (!nowrite) {
       fs.writeFileSync(filepath, contents);
     }
-    grunt.verbose.ok();
+    this.log.verbose.ok();
     return true;
   } catch (e) {
-    grunt.verbose.error();
-    throw gruntUtil.error('Unable to write "' + filepath + '" file (Error code: ' + e.code + ').', e);
+    this.log.verbose.error();
+    throw legacyUtil.error('Unable to write "' + filepath + '" file (Error code: ' + e.code + ').', e);
   }
 };
 
@@ -516,7 +515,6 @@ File.prototype.copy = function(srcpath, destpath, options) {
  */
 
 File.prototype._copy = function(srcpath, destpath, options) {
-  var grunt = this.options.grunt;
   if (!options) { options = {}; }
   // If a process function was specified, and noProcess isn't true or doesn't
   // match the srcpath, process the file's source.
@@ -528,18 +526,18 @@ File.prototype._copy = function(srcpath, destpath, options) {
   // Actually read the file.
   var contents = this.read(srcpath, readWriteOptions);
   if (process) {
-    grunt.verbose.write('Processing source...');
+    this.log.verbose.write('Processing source...');
     try {
       contents = options.process(contents, srcpath, destpath);
-      grunt.verbose.ok();
+      this.log.verbose.ok();
     } catch (e) {
-      grunt.verbose.error();
-      throw gruntUtil.error('Error while processing "' + srcpath + '" file.', e);
+      this.log.verbose.error();
+      throw legacyUtil.error('Error while processing "' + srcpath + '" file.', e);
     }
   }
   // Abort copy if the process function returns false.
   if (contents === false) {
-    grunt.verbose.writeln('Write aborted.');
+    this.log.verbose.writeln('Write aborted.');
   } else {
     this.write(destpath, contents, readWriteOptions);
   }
@@ -557,27 +555,27 @@ File.prototype.delete = function(filepath, options) {
   var grunt = this.options.grunt;
   filepath = String(filepath);
 
-  var nowrite = grunt.option('no-write');
+  var nowrite = this.option('no-write');
   if (!options) {
-    options = {force: grunt.option('force') || false};
+    options = {force: this.option('force') || false};
   }
 
-  grunt.verbose.write((nowrite ? 'Not actually deleting ' : 'Deleting ') + filepath + '...');
+  this.log.verbose.write((nowrite ? 'Not actually deleting ' : 'Deleting ') + filepath + '...');
 
   if (!this.exists(filepath)) {
-    grunt.verbose.error();
-    grunt.log.warn('Cannot delete nonexistent file.');
+    this.log.verbose.error();
+    this.log.warn('Cannot delete nonexistent file.');
     return false;
   }
 
   // Only delete cwd or outside cwd if --force enabled. Be careful, people!
   if (!options.force) {
     if (this.isPathCwd(filepath)) {
-      grunt.verbose.error();
+      this.log.verbose.error();
       grunt.fail.warn('Cannot delete the current working directory.');
       return false;
     } else if (!this.isPathInCwd(filepath)) {
-      grunt.verbose.error();
+      this.log.verbose.error();
       grunt.fail.warn('Cannot delete files outside the current working directory.');
       return false;
     }
@@ -588,11 +586,11 @@ File.prototype.delete = function(filepath, options) {
     if (!nowrite) {
       rimraf.sync(filepath);
     }
-    grunt.verbose.ok();
+    this.log.verbose.ok();
     return true;
   } catch (e) {
-    grunt.verbose.error();
-    throw gruntUtil.error('Unable to delete "' + filepath + '" file (' + e.message + ').', e);
+    this.log.verbose.error();
+    throw legacyUtil.error('Unable to delete "' + filepath + '" file (' + e.message + ').', e);
   }
 };
 

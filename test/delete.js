@@ -35,7 +35,7 @@ describe('file.delete():', function () {
       this.warnCount = 0;
     }.bind(this);
 
-    grunt.fail.warn = grunt.log.warn = function() {
+    grunt.fail.warn = file.log.warn = function() {
       this.warnCount += 1;
     }.bind(this);
 
