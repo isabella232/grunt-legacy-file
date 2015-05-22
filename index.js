@@ -111,6 +111,8 @@ File.prototype._unixifyPath = function(filepath) {
 
 /**
  * Change the current base path (ie, CWD) to the specified path.
+ *
+ * @param {String} `filepath` Path may be a single string, or list of file path segments.
  * @api public
  */
 
@@ -157,6 +159,7 @@ File.prototype._processPatterns = function(patterns, fn) {
  * @param {String|Array} `patterns` String or array of glob patterns.
  * @param {Array} `filepaths` Filepath or paths to match against.
  * @return {Array}
+ * @api public
  */
 
 File.prototype.match = function(options, patterns, filepaths) {
@@ -186,6 +189,7 @@ File.prototype.match = function(options, patterns, filepaths) {
  * @param {String|Array} `patterns` String or array of glob patterns.
  * @param {Array} `filepaths` Filepath or paths to match against.
  * @return {Boolean}
+ * @api public
  */
 
 File.prototype.isMatch = function() {
@@ -199,6 +203,7 @@ File.prototype.isMatch = function() {
  * @param {Object} `options`
  * @param {String|Array} `patterns` String or array of glob patterns.
  * @return {Array} `filepaths` Filepath or paths to match against.
+ * @api public
  */
 
 File.prototype.expand = function() {
@@ -299,8 +304,8 @@ File.prototype.expandMapping = function(patterns, destBase, options) {
 /**
  * Like `mkdir -p`. Create a directory and any intermediary directories.
  *
- * @param {String} dirpath
- * @param {String} mode
+ * @param {String} `dirpath`
+ * @param {String} `mode`
  * @api public
  */
 
@@ -595,9 +600,9 @@ File.prototype.delete = function(filepath, options) {
 };
 
 /**
- * True if the file path exists.
+ * Returns true if the given file path exists.
  *
- * @return {[type]}
+ * @return {Boolean}
  * @api public
  */
 
@@ -607,7 +612,7 @@ File.prototype.exists = function() {
 };
 
 /**
- * True if the file is a symbolic link.
+ * Returns true if the given file is a symbolic link.
  *
  * @return {Boolean}
  * @api public
@@ -619,7 +624,7 @@ File.prototype.isLink = function() {
 };
 
 /**
- * True if the path is a directory.
+ * Returns true if the given path is a directory.
  *
  * @return {Boolean}
  * @api public
@@ -631,7 +636,7 @@ File.prototype.isDir = function() {
 };
 
 /**
- * True if the path is a file.
+ * Returns true if the given path is a file.
  *
  * @return {Boolean}
  * @api public
@@ -643,7 +648,7 @@ File.prototype.isFile = function() {
 };
 
 /**
- * Is a given file path absolute?
+ * Returns true if the given file path absolute.
  *
  * @return {Boolean}
  * @api public
@@ -655,7 +660,7 @@ File.prototype.isPathAbsolute = function() {
 };
 
 /**
- * Do all the specified paths refer to the same path?
+ * Returns true if all of specified paths refer to the same path.
  *
  * @return {Boolean}
  * @api public
@@ -670,7 +675,7 @@ File.prototype.arePathsEquivalent = function(first) {
 };
 
 /**
- * Are descendant path(s) contained within ancestor path?
+ * Returns true if descendant path(s) are contained within ancestor path.
  * Note: does not test if paths actually exist.
  *
  * @return {Boolean}
@@ -688,7 +693,7 @@ File.prototype.doesPathContain = function(ancestor) {
 };
 
 /**
- * Test to see if a filepath is the CWD.
+ * Returns true if a filepath is the CWD.
  *
  * @param {String} `filepath` A filepath may be passed as a single argument or as a list of path segments.
  * @return {Boolean}
@@ -705,7 +710,7 @@ File.prototype.isPathCwd = function() {
 };
 
 /**
- * Return `true` if a filepath is contained within the given CWD.
+ * Returns true if a filepath is contained within the given CWD.
  *
  * @param {String} `filepath` A filepath may be passed as a single argument or as a list of path segments.
  * @return {Boolean}
