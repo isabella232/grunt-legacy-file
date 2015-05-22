@@ -31,7 +31,11 @@
     "rimraf": "^2.3.3"
   },
   "devDependencies": {
-    "grunt": "git://github.com/gruntjs/grunt#master",
+    "grunt": "^0.4.5",
+    "grunt-contrib-jshint": "^0.11.2",
+    "grunt-legacy-util": "^0.2.0",
+    "grunt-mocha-test": "^0.12.7",
+    "jshint-stylish": "^1.0.2",
     "mocha": "*",
     "temporary": "0.0.8",
     "verb": "0.7.0"

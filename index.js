@@ -16,6 +16,7 @@ var path = require('path');
 var YAML = require('js-yaml');
 var rimraf = require('rimraf');
 var iconv = require('iconv-lite');
+var gruntUtil = require('grunt-legacy-util');
 var win32 = process.platform === 'win32';
 
 /**
@@ -102,11 +103,10 @@ File.prototype.setBase = function() {
  */
 
 File.prototype._processPatterns = function(patterns, fn) {
-  var grunt = this.options.grunt;
   // Filepaths to return.
   var result = [];
   // Iterate over flattened patterns array.
-  grunt.util._.flatten(patterns).forEach(function(pattern) {
+  gruntUtil._.flatten(patterns).forEach(function(pattern) {
     // If the first character is ! it should be omitted
     var exclusion = pattern.indexOf('!') === 0;
     // If the pattern is an exclusion, remove the !
@@ -115,10 +115,10 @@ File.prototype._processPatterns = function(patterns, fn) {
     var matches = fn(pattern);
     if (exclusion) {
       // If an exclusion, remove matching files.
-      result = grunt.util._.difference(result, matches);
+      result = gruntUtil._.difference(result, matches);
     } else {
       // Otherwise add matching files.
-      result = grunt.util._.union(result, matches);
+      result = gruntUtil._.union(result, matches);
     }
   });
   return result;
@@ -135,7 +135,7 @@ File.prototype._processPatterns = function(patterns, fn) {
  */
 
 File.prototype.match = function(options, patterns, filepaths) {
-  if (this.options.grunt.util.kindOf(options) !== 'object') {
+  if (gruntUtil.kindOf(options) !== 'object') {
     filepaths = patterns;
     patterns = options;
     options = {};
@@ -177,11 +177,10 @@ File.prototype.isMatch = function() {
  */
 
 File.prototype.expand = function() {
-  var grunt = this.options.grunt;
-  var args = grunt.util.toArray(arguments);
+  var args = gruntUtil.toArray(arguments);
   // If the first argument is an options object, save those options to pass
   // into the file.glob.sync method.
-  var options = grunt.util.kindOf(args[0]) === 'object' ? args.shift() : {};
+  var options = gruntUtil.kindOf(args[0]) === 'object' ? args.shift() : {};
   // Use the first argument if it's an Array, otherwise convert the arguments
   // object to an array and use that.
   var patterns = Array.isArray(args[0]) ? args[0] : args;
@@ -228,7 +227,7 @@ File.prototype.expand = function() {
  */
 
 File.prototype.expandMapping = function(patterns, destBase, options) {
-  options = this.options.grunt.util._.defaults({}, options, {
+  options = gruntUtil._.defaults({}, options, {
     extDot: 'first',
     rename: function(destBase, destPath) {
       return path.join(destBase || '', destPath);
@@ -292,7 +291,7 @@ File.prototype.mkdir = function(dirpath, mode) {
       try {
         fs.mkdirSync(subpath, mode);
       } catch (e) {
-        throw this.options.grunt.util.error('Unable to create directory "' + subpath + '" (Error code: ' + e.code + ').', e);
+        throw gruntUtil.error('Unable to create directory "' + subpath + '" (Error code: ' + e.code + ').', e);
       }
     }
     return parts;
@@ -369,7 +368,7 @@ File.prototype.read = function(filepath, options) {
     return contents;
   } catch (e) {
     grunt.verbose.error();
-    throw grunt.util.error('Unable to read "' + filepath + '" file (Error code: ' + e.code + ').', e);
+    throw gruntUtil.error('Unable to read "' + filepath + '" file (Error code: ' + e.code + ').', e);
   }
 };
 
@@ -393,7 +392,7 @@ File.prototype.readJSON = function(filepath, options) {
     return result;
   } catch (e) {
     grunt.verbose.error();
-    throw grunt.util.error('Unable to parse "' + filepath + '" file (' + e.message + ').', e);
+    throw gruntUtil.error('Unable to parse "' + filepath + '" file (' + e.message + ').', e);
   }
 };
 
@@ -417,7 +416,7 @@ File.prototype.readYAML = function(filepath, options) {
     return result;
   } catch (e) {
     grunt.verbose.error();
-    throw grunt.util.error('Unable to parse "' + filepath + '" file (' + e.problem + ').', e);
+    throw gruntUtil.error('Unable to parse "' + filepath + '" file (' + e.problem + ').', e);
   }
 };
 
@@ -451,7 +450,7 @@ File.prototype.write = function(filepath, contents, options) {
     return true;
   } catch (e) {
     grunt.verbose.error();
-    throw grunt.util.error('Unable to write "' + filepath + '" file (Error code: ' + e.code + ').', e);
+    throw gruntUtil.error('Unable to write "' + filepath + '" file (Error code: ' + e.code + ').', e);
   }
 };
 
@@ -511,7 +510,7 @@ File.prototype._copy = function(srcpath, destpath, options) {
       grunt.verbose.ok();
     } catch (e) {
       grunt.verbose.error();
-      throw grunt.util.error('Error while processing "' + srcpath + '" file.', e);
+      throw gruntUtil.error('Error while processing "' + srcpath + '" file.', e);
     }
   }
   // Abort copy if the process function returns false.
@@ -569,7 +568,7 @@ File.prototype.delete = function(filepath, options) {
     return true;
   } catch (e) {
     grunt.verbose.error();
-    throw grunt.util.error('Unable to delete "' + filepath + '" file (' + e.message + ').', e);
+    throw gruntUtil.error('Unable to delete "' + filepath + '" file (' + e.message + ').', e);
   }
 };
 
