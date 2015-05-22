@@ -20,7 +20,7 @@ describe('.read():', function () {
   var defaultEncoding;
 
   beforeEach(function (done) {
-    file = new File({grunt: grunt});
+    file = new File({grunt: grunt, log: grunt.log});
     defaultEncoding = file.defaultEncoding;
     file.defaultEncoding = 'utf8';
     done();

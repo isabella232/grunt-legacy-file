@@ -22,13 +22,13 @@ var file = require('grunt-legacy-file');
 
 ## API
 
-### [extDotRe](index.js#L45)
+### [extDotRe](index.js#L44)
 
 Used by the `expandMapping` method. The "ext" option refers
 to either everything after the first dot (default) or everything
 after the last dot.
 
-### [File](index.js#L57)
+### [File](index.js#L56)
 
 Create an instance of `File` with the given `options`.
 
@@ -79,7 +79,7 @@ given wildcard patterns.
 * `patterns` **{String|Array}**: String or array of glob patterns.
 * `returns` **{Array}** `filepaths`: Filepath or paths to match against.
 
-### [.expandMapping](index.js#L260)
+### [.expandMapping](index.js#L259)
 
 Build a multi task "files" object dynamically.
 
@@ -90,7 +90,7 @@ Build a multi task "files" object dynamically.
 * `options` **{Object}**
 * `returns` **{Array}**
 
-### [.mkdir](index.js#L312)
+### [.mkdir](index.js#L311)
 
 Like `mkdir -p`. Create a directory and any intermediary directories.
 
@@ -99,7 +99,7 @@ Like `mkdir -p`. Create a directory and any intermediary directories.
 * `dirpath` **{String}**
 * `mode` **{String}**
 
-### [.recurse](index.js#L342)
+### [.recurse](index.js#L341)
 
 Recurse into a directory, executing callback for each file.
 
@@ -110,16 +110,16 @@ Recurse into a directory, executing callback for each file.
 * `subdir` **{String}**
 * `returns` **{Array}**: Array of filepaths.
 
-### [.defaultEncoding](index.js#L361)
+### [.defaultEncoding](index.js#L360)
 
 The default file encoding to use. Default is `utf8`
 
-### [.preserveBOM](index.js#L371)
+### [.preserveBOM](index.js#L370)
 
 Preserve the BOM (byte-order mark) on `file.read`, rather than strip it.
 Set to `false` by default.
 
-### [.read](index.js#L382)
+### [.read](index.js#L381)
 
 Read a file, return its contents.
 
@@ -129,7 +129,7 @@ Read a file, return its contents.
 * `options` **{Object}**
 * `returns` **{String|Buffer}**
 
-### [.readJSON](index.js#L415)
+### [.readJSON](index.js#L414)
 
 Read a JSON file, parse its contents, return an object.
 
@@ -139,7 +139,7 @@ Read a JSON file, parse its contents, return an object.
 * `options` **{Object}**
 * `returns` **{Object}**
 
-### [.readYAML](index.js#L438)
+### [.readYAML](index.js#L437)
 
 Read a YAML file, parse its contents, return an object.
 
@@ -149,7 +149,7 @@ Read a YAML file, parse its contents, return an object.
 * `options` **{Object}**
 * `returns` **{Object}**
 
-### [.write](index.js#L461)
+### [.write](index.js#L460)
 
 Write a file.
 
@@ -159,7 +159,7 @@ Write a file.
 * `contents` **{String|Buffer}**
 * `options` **{Object}**
 
-### [.copy](index.js#L498)
+### [.copy](index.js#L497)
 
 Read a file, optionally processing its content, then
 write the output. Or read a directory, recursively
@@ -173,7 +173,7 @@ writing output.
 * `options` **{Object}**
 * `returns` **{String}**
 
-### [._copy](index.js#L522)
+### [._copy](index.js#L521)
 
 Read a file, optionally processing its content, then write the output.
 
@@ -183,7 +183,7 @@ Read a file, optionally processing its content, then write the output.
 * `destpath` **{String}**
 * `options` **{Object}**
 
-### [.delete](index.js#L559)
+### [.delete](index.js#L558)
 
 Delete folders and files recursively
 
@@ -192,50 +192,50 @@ Delete folders and files recursively
 * `filepath` **{String}**: The file path to delete.
 * `options` **{Object}**
 
-### [.exists](index.js#L609)
+### [.exists](index.js#L608)
 
 Returns true if the given file path exists.
 
 * `returns` **{Boolean}**
 
-### [.isLink](index.js#L621)
+### [.isLink](index.js#L620)
 
 Returns true if the given file is a symbolic link.
 
 * `returns` **{Boolean}**
 
-### [.isDir](index.js#L633)
+### [.isDir](index.js#L632)
 
 Returns true if the given path is a directory.
 
 * `returns` **{Boolean}**
 
-### [.isFile](index.js#L645)
+### [.isFile](index.js#L644)
 
 Returns true if the given path is a file.
 
 * `returns` **{Boolean}**
 
-### [.isPathAbsolute](index.js#L657)
+### [.isPathAbsolute](index.js#L656)
 
 Returns true if the given file path absolute.
 
 * `returns` **{Boolean}**
 
-### [.arePathsEquivalent](index.js#L669)
+### [.arePathsEquivalent](index.js#L668)
 
 Returns true if all of specified paths refer to the same path.
 
 * `returns` **{Boolean}**
 
-### [.doesPathContain](index.js#L685)
+### [.doesPathContain](index.js#L684)
 
 Returns true if descendant path(s) are contained within ancestor path.
 Note: does not test if paths actually exist.
 
 * `returns` **{Boolean}**
 
-### [.isPathCwd](index.js#L703)
+### [.isPathCwd](index.js#L702)
 
 Returns true if a filepath is the CWD.
 
@@ -244,7 +244,7 @@ Returns true if a filepath is the CWD.
 * `filepath` **{String}**: A filepath may be passed as a single argument or as a list of path segments.
 * `returns` **{Boolean}**
 
-### [.isPathInCwd](index.js#L720)
+### [.isPathInCwd](index.js#L719)
 
 Returns true if a filepath is contained within the given CWD.
 
@@ -301,10 +301,6 @@ Pull requests and stars are always welcome. For bugs and feature requests, [plea
 + [github/cowboy](https://github.com/cowboy)
 * [twitter/cowboy](http://twitter.com/cowboy)
 
-## Release history
-
-{%= changelog(yaml(read("CHANGELOG"))) %}
-
 ## License
 
 Copyright © 2015 "Cowboy" Ben Alman
@@ -313,3 +309,5 @@ Released under the MIT license.
 ***
 
 _This file was generated by [verb-cli](https://github.com/assemble/verb-cli) on May 22, 2015._
+
+<!-- deps: verb -->

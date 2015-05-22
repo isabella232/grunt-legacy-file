@@ -24,18 +24,18 @@ describe('file.delete():', function () {
   var original, cwd;
 
   before(function(done) {
-    file = new File({grunt: grunt});
+    file = new File({grunt: grunt, log: grunt.log});
     this.writeOption = grunt.option('write');
 
     // Testing that warnings were displayed.
     this.oldFailWarnFn = grunt.fail.warn;
-    this.oldLogWarnFn = grunt.log.warn;
+    this.oldLogWarnFn = file.options.log.warn;
 
     this.resetWarnCount = function() {
       this.warnCount = 0;
     }.bind(this);
 
-    grunt.fail.warn = file.log.warn = function() {
+    grunt.fail.warn = file.options.log.warn = function() {
       this.warnCount += 1;
     }.bind(this);
 
@@ -45,11 +45,9 @@ describe('file.delete():', function () {
   });
 
   after(function(done) {
-    // file.defaultEncoding = this.defaultEncoding;
     grunt.option('write', this.writeOption);
-
     grunt.fail.warn = this.oldFailWarnFn;
-    grunt.log.warn = this.oldLogWarnFn;
+    file.options.log.warn = this.oldLogWarnFn;
     file.setBase(original);
     done();
   });

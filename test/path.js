@@ -21,7 +21,7 @@ fs.symlinkSync(path.resolve('test/fixtures/expand'), path.join(tempdir.path, 'ex
 
 describe('path:', function () {
   beforeEach(function () {
-    file = new File({grunt: grunt});
+    file = new File({grunt: grunt, log: grunt.log});
   });
 
   describe('.isPathAbsolute():', function () {

@@ -23,7 +23,7 @@ describe('file.expandMapping():', function () {
   var actual, expected;
 
   beforeEach(function (done) {
-    file = new File({grunt: grunt});
+    file = new File({grunt: grunt, log: grunt.log});
     this.cwd = process.cwd();
     process.chdir('test/fixtures');
     done();
@@ -128,7 +128,7 @@ describe('file.expandMapping():', function () {
       src: ['expand-mapping-ext/file.ext.ension']
     }, ];
     // 'extDot of `first` should replace everything after the first dot in the filename.'
-    assert.deepEqual(actual, expected); 
+    assert.deepEqual(actual, expected);
 
     actual = file.expandMapping(['expand-mapping-ext/**/file*'], 'dest', {
       ext: '.foo',
@@ -145,7 +145,7 @@ describe('file.expandMapping():', function () {
       src: ['expand-mapping-ext/file.ext.ension']
     }, ];
     // 'extDot of `last` should replace everything after the last dot in the filename.'
-    assert.deepEqual(actual, expected); 
+    assert.deepEqual(actual, expected);
   });
 
   it('options.cwd:', function () {
@@ -163,7 +163,7 @@ describe('file.expandMapping():', function () {
       src: ['expand/deep/deeper/deepest/deepest.txt']
     }, ];
     // 'cwd should be stripped from front of destPath, pre-destBase+destPath join'
-    assert.deepEqual(actual, expected); 
+    assert.deepEqual(actual, expected);
   });
 
   it('options.rename:', function () {
@@ -186,7 +186,7 @@ describe('file.expandMapping():', function () {
       src: ['expand/deep/deeper/deepest/deepest.txt']
     }, ];
     // 'custom rename function should be used to build dest, post-flatten'
-    assert.deepEqual(actual, expected); 
+    assert.deepEqual(actual, expected);
   });
 
   it('rename to same dest:', function () {
@@ -213,6 +213,6 @@ describe('file.expandMapping():', function () {
     }];
 // 'if dest is same for multiple src, create an array of src'
 
-    assert.deepEqual(actual, expected); 
+    assert.deepEqual(actual, expected);
   });
 });
