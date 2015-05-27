@@ -16,7 +16,6 @@ var path = require('path');
 var YAML = require('js-yaml');
 var rimraf = require('rimraf');
 var iconv = require('iconv-lite');
-var kindOf = require('kind-of');
 var legacyUtil = require('grunt-legacy-util');
 var _ = require('lodash');
 
@@ -38,7 +37,6 @@ var pathSeparatorRe = /[\/\\]/g;
  * Used by the `expandMapping` method. The "ext" option refers
  * to either everything after the first dot (default) or everything
  * after the last dot.
- * @api public
  */
 
 var extDotRe = {
@@ -84,6 +82,7 @@ File.prototype.findup = require('findup-sync');
  *
  * @param  {String} `name` The key of the option to get.
  * @return {*}
+ * @api public
  */
 
 File.prototype.option = function(name) {
@@ -163,7 +162,7 @@ File.prototype._processPatterns = function(patterns, fn) {
  */
 
 File.prototype.match = function(options, patterns, filepaths) {
-  if (kindOf(options) !== 'object') {
+  if (!_.isPlainObject(options)) {
     filepaths = patterns;
     patterns = options;
     options = {};
@@ -210,7 +209,7 @@ File.prototype.expand = function() {
   var args = _.toArray(arguments);
   // If the first argument is an options object, save those options to pass
   // into the file.glob.sync method.
-  var options = kindOf(args[0]) === 'object' ? args.shift() : {};
+  var options = _.isPlainObject(args[0]) ? args.shift() : {};
   // Use the first argument if it's an Array, otherwise convert the arguments
   // object to an array and use that.
   var patterns = Array.isArray(args[0]) ? args[0] : args;
