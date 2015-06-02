@@ -14,7 +14,7 @@ var file;
 
 describe('file.match():', function () {
   beforeEach(function () {
-    file = new File({grunt: grunt, log: grunt.log});
+    file = new File({grunt: grunt});
   });
 
   it('Should return empty set if a required argument is missing or an empty set.', function () {

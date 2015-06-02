@@ -14,7 +14,7 @@ var file;
 
 describe('file.recurse():', function () {
   beforeEach(function () {
-    file = new File({grunt: grunt, log: grunt.log});
+    file = new File({grunt: grunt});
   });
 
   it('paths and arguments should match.', function () {

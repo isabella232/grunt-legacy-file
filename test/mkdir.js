@@ -16,7 +16,7 @@ var file;
 
 describe('.mkdir():', function () {
   before(function () {
-    file = new File({grunt: grunt, log: grunt.log});
+    file = new File({grunt: grunt});
     file.mkdir(__dirname + '/temp');
   });
   after(function () {

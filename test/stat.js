@@ -22,7 +22,7 @@ fs.symlinkSync(path.resolve('test/fixtures/expand'), path.join(tempdir.path, 'ex
 
 describe('.stat():', function () {
   beforeEach(function () {
-    file = new File({grunt: grunt, log: grunt.log});
+    file = new File({grunt: grunt});
   });
 
   describe('.isLink() - false:', function () {
