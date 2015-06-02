@@ -58,7 +58,7 @@ function File(options) {
     force: false
   }, options);
   if (!this.options.grunt) {
-    throw legacyUtil.error('Expected `options.grunt` but `options.grunt` is undefined.');
+    throw legacyUtil.error('grunt-legacy-file expects `options.grunt` to be an object.');
   }
   this.log = this.options.grunt.log;
 }
@@ -91,7 +91,7 @@ File.prototype.findup = require('findup-sync');
  */
 
 File.prototype.option = function(name) {
-  if (this.options.grunt && this.options.grunt.option) {
+  if (this.options.grunt.option) {
     return this.options.grunt.option(name);
   }
   var no = name.match(/^no-(.+)$/);
