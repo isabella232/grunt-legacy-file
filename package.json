@@ -25,7 +25,7 @@
   "dependencies": {
     "findup-sync": "^0.2.1",
     "glob": "^5.0.5",
-    "grunt-legacy-event-logger": "gruntjs/grunt-legacy-event-logger",
+    "grunt-legacy-log-facade": "gruntjs/grunt-legacy-log-facade",
     "iconv-lite": "^0.4.8",
     "js-yaml": "^3.3.0",
     "lodash": "^3.9.1",

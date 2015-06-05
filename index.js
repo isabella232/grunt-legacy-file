@@ -17,7 +17,7 @@ var YAML = require('js-yaml');
 var rimraf = require('rimraf');
 var iconv = require('iconv-lite');
 var legacyUtil = require('grunt-legacy-util');
-var logger = require('grunt-legacy-event-logger/lib/facade');
+var logger = require('grunt-legacy-log-facade');
 var _ = require('lodash');
 
 /**
