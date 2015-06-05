@@ -24,7 +24,7 @@ describe('file.delete():', function () {
   var original, cwd;
 
   before(function(done) {
-    file = new File({grunt: grunt});
+    file = new File(grunt.option);
     this.writeOption = grunt.option('write');
 
     // Testing that warnings were displayed.

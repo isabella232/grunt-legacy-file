@@ -22,7 +22,7 @@ describe('.copy():', function () {
   var tempfile;
 
   beforeEach(function (done) {
-    file = new File({grunt: grunt});
+    file = new File(grunt.option);
     defaultEncoding = file.defaultEncoding;
     file.defaultEncoding = 'utf8';
     done();

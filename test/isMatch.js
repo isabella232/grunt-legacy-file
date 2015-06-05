@@ -14,7 +14,7 @@ var file;
 
 describe('file.isMatch():', function () {
   beforeEach(function () {
-    file = new File({grunt: grunt});
+    file = new File(grunt.option);
   });
 
   it('basic matching:', function () {

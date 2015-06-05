@@ -21,7 +21,7 @@ fs.symlinkSync(path.resolve('test/fixtures/expand'), path.join(tempdir.path, 'ex
 
 describe('file.exists():', function () {
   beforeEach(function () {
-    file = new File({grunt: grunt});
+    file = new File(grunt.option);
   });
 
   it('should return `true` when a file exists:', function () {

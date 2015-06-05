@@ -23,7 +23,7 @@ describe('file.expandMapping():', function () {
   var actual, expected;
 
   beforeEach(function (done) {
-    file = new File({grunt: grunt});
+    file = new File(grunt.option);
     this.cwd = process.cwd();
     process.chdir('test/fixtures');
     done();

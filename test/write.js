@@ -22,7 +22,7 @@ describe('.write():', function () {
   var defaultEncoding;
 
   beforeEach(function () {
-    file = new File({grunt: grunt});
+    file = new File(grunt.option);
     defaultEncoding = file.defaultEncoding;
     file.defaultEncoding = 'utf8';
   });
