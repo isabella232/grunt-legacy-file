@@ -17,6 +17,7 @@ var YAML = require('js-yaml');
 var rimraf = require('rimraf');
 var iconv = require('iconv-lite');
 var legacyUtil = require('grunt-legacy-util');
+var logger = require('grunt-legacy-event-logger/lib/facade');
 var _ = require('lodash');
 
 /**
@@ -27,8 +28,6 @@ var win32 = process.platform === 'win32';
 
 /**
  * Regex used for path separators.
- *
- * @type {RegExp}
  */
 
 var pathSeparatorRe = /[\/\\]/g;
@@ -47,20 +46,20 @@ var extDotRe = {
 /**
  * Create an instance of `File` with the given `options`.
  *
- * @param {Object} `options`
+ * @param {Object|Function} `options`
  * @api public
  */
 
 function File(options) {
-  this.options = _.extend({}, {
-    grunt: null,
-    write: true,
-    force: false
-  }, options);
-  if (!this.options.grunt) {
-    throw legacyUtil.error('grunt-legacy-file expects `options.grunt` to be an object.');
+  this.options = {};
+  if (typeof options === 'function') {
+    this.option = options;
+  } else {
+    this.options = options || {};
+    this.option = optionsFn(this.options);
   }
-  this.log = this.options.grunt.log;
+  this.log = logger.logMethodsToEvents();
+  this.fail = logger.logMethodsToEvents();
 }
 
 /**
@@ -80,23 +79,6 @@ File.prototype.minimatch = require('minimatch');
  */
 
 File.prototype.findup = require('findup-sync');
-
-/**
- * Check for options through Grunt if specified, otherwise
- * defer to options object properties.
- *
- * @param  {String} `name` The key of the option to get.
- * @return {*}
- * @api public
- */
-
-File.prototype.option = function(name) {
-  if (this.options.grunt.option) {
-    return this.options.grunt.option(name);
-  }
-  var no = name.match(/^no-(.+)$/);
-  return no ? !this.options[no[1]] : this.options[name];
-};
 
 /**
  * Normalize all `\\` paths to unix-style (`/`) paths.
@@ -560,7 +542,6 @@ File.prototype._copy = function(srcpath, destpath, options) {
  */
 
 File.prototype.delete = function(filepath, options) {
-  var grunt = this.options.grunt;
   filepath = String(filepath);
 
   var nowrite = this.option('no-write');
@@ -580,11 +561,11 @@ File.prototype.delete = function(filepath, options) {
   if (!options.force) {
     if (this.isPathCwd(filepath)) {
       this.log.verbose.error();
-      grunt.fail.warn('Cannot delete the current working directory.');
+      this.fail.warn('Cannot delete the current working directory.');
       return false;
     } else if (!this.isPathInCwd(filepath)) {
       this.log.verbose.error();
-      grunt.fail.warn('Cannot delete files outside the current working directory.');
+      this.fail.warn('Cannot delete files outside the current working directory.');
       return false;
     }
   }
@@ -728,6 +709,22 @@ File.prototype.isPathInCwd = function() {
     return false;
   }
 };
+
+/**
+ * Returns a function for getting properties defined on `obj`.
+ * This is used as a fallback function when one isn't passed
+ * to the constructor.
+ *
+ * @param  {Object} `obj`
+ * @return {Function} Returns a function for getting an option by `name`
+ */
+
+function optionsFn(obj) {
+  return function (name) {
+    var no = name.match(/^no-(.+)$/);
+    return no ? !obj[no[1]] : obj[name];
+  };
+}
 
 /**
  * Expose `File`
