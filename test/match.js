@@ -9,7 +9,7 @@
 
 var assert = require('assert');
 var grunt = require('grunt');
-var File = require('..');
+var File = require('..').File;
 var file;
 
 describe('file.match():', function () {

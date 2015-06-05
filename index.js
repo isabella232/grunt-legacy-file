@@ -733,4 +733,4 @@ File.prototype.isPathInCwd = function() {
  * Expose `File`
  */
 
-module.exports = File;
+exports.File = File;

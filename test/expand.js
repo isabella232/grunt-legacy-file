@@ -13,7 +13,7 @@ var path = require('path');
 var grunt = require('grunt');
 var Tempdir = require('temporary/lib/dir');
 var tempdir = new Tempdir();
-var File = require('..');
+var File = require('..').File;
 var file;
 var cwd;
 

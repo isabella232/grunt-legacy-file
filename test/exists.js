@@ -13,7 +13,7 @@ var grunt = require('grunt');
 var path = require('path');
 var Tempdir = require('temporary/lib/dir');
 var tempdir = new Tempdir();
-var File = require('..');
+var File = require('..').File;
 var file;
 
 fs.symlinkSync(path.resolve('test/fixtures/octocat.png'), path.join(tempdir.path, 'octocat.png'), 'file');

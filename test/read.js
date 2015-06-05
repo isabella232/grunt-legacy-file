@@ -11,7 +11,7 @@ var assert = require('assert');
 var fs = require('fs');
 var grunt = require('grunt');
 var utils = require('./utils');
-var File = require('..');
+var File = require('..').File;
 var file;
 
 describe('.read():', function () {

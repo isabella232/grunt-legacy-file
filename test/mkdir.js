@@ -11,7 +11,7 @@ var assert = require('assert');
 var fs = require('fs');
 var path = require('path');
 var grunt = require('grunt');
-var File = require('..');
+var File = require('..').File;
 var file;
 
 describe('.mkdir():', function () {

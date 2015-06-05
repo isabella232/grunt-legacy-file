@@ -14,7 +14,7 @@ var Tempfile = require('temporary/lib/file');
 var Tempdir = require('temporary/lib/dir');
 var tempdir = new Tempdir();
 var utils = require('./utils');
-var File = require('..');
+var File = require('..').File;
 var file;
 
 describe('.copy():', function () {

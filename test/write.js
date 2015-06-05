@@ -14,7 +14,7 @@ var grunt = require('grunt');
 var Tempfile = require('temporary/lib/file');
 var Tempdir = require('temporary/lib/dir');
 var utils = require('./utils');
-var File = require('..');
+var File = require('..').File;
 var file;
 
 describe('.write():', function () {
