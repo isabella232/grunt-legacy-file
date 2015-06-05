@@ -22,21 +22,15 @@ var file = require('grunt-legacy-file');
 
 ## API
 
-### [extDotRe](index.js#L44)
-
-Used by the `expandMapping` method. The "ext" option refers
-to either everything after the first dot (default) or everything
-after the last dot.
-
-### [File](index.js#L56)
+### [File](index.js#L53)
 
 Create an instance of `File` with the given `options`.
 
 **Params**
 
-* `options` **{Object}**
+* `options` **{Object|Function}**
 
-### [.setBase](index.js#L119)
+### [.setBase](index.js#L105)
 
 Change the current base path (ie, CWD) to the specified path.
 
@@ -44,7 +38,7 @@ Change the current base path (ie, CWD) to the specified path.
 
 * `filepath` **{String}**: Path may be a single string, or list of file path segments.
 
-### [.match](index.js#L165)
+### [.match](index.js#L151)
 
 Match a filepath or filepaths against one or more wildcard
 patterns. Returns all matching filepaths.
@@ -56,7 +50,7 @@ patterns. Returns all matching filepaths.
 * `filepaths` **{Array}**: Filepath or paths to match against.
 * `returns` **{Array}**
 
-### [.isMatch](index.js#L195)
+### [.isMatch](index.js#L181)
 
 Returns true if any of the wildcard patterns match any
 of the given file paths.
@@ -68,7 +62,7 @@ of the given file paths.
 * `filepaths` **{Array}**: Filepath or paths to match against.
 * `returns` **{Boolean}**
 
-### [.expand](index.js#L209)
+### [.expand](index.js#L195)
 
 Return an array of all file paths that match the
 given wildcard patterns.
@@ -79,7 +73,7 @@ given wildcard patterns.
 * `patterns` **{String|Array}**: String or array of glob patterns.
 * `returns` **{Array}** `filepaths`: Filepath or paths to match against.
 
-### [.expandMapping](index.js#L259)
+### [.expandMapping](index.js#L245)
 
 Build a multi task "files" object dynamically.
 
@@ -90,7 +84,7 @@ Build a multi task "files" object dynamically.
 * `options` **{Object}**
 * `returns` **{Array}**
 
-### [.mkdir](index.js#L311)
+### [.mkdir](index.js#L297)
 
 Like `mkdir -p`. Create a directory and any intermediary directories.
 
@@ -99,7 +93,7 @@ Like `mkdir -p`. Create a directory and any intermediary directories.
 * `dirpath` **{String}**
 * `mode` **{String}**
 
-### [.recurse](index.js#L341)
+### [.recurse](index.js#L327)
 
 Recurse into a directory, executing callback for each file.
 
@@ -110,16 +104,16 @@ Recurse into a directory, executing callback for each file.
 * `subdir` **{String}**
 * `returns` **{Array}**: Array of filepaths.
 
-### [.defaultEncoding](index.js#L360)
+### [.defaultEncoding](index.js#L346)
 
 The default file encoding to use. Default is `utf8`
 
-### [.preserveBOM](index.js#L370)
+### [.preserveBOM](index.js#L356)
 
 Preserve the BOM (byte-order mark) on `file.read`, rather than strip it.
 Set to `false` by default.
 
-### [.read](index.js#L381)
+### [.read](index.js#L367)
 
 Read a file, return its contents.
 
@@ -129,7 +123,7 @@ Read a file, return its contents.
 * `options` **{Object}**
 * `returns` **{String|Buffer}**
 
-### [.readJSON](index.js#L414)
+### [.readJSON](index.js#L400)
 
 Read a JSON file, parse its contents, return an object.
 
@@ -139,7 +133,7 @@ Read a JSON file, parse its contents, return an object.
 * `options` **{Object}**
 * `returns` **{Object}**
 
-### [.readYAML](index.js#L437)
+### [.readYAML](index.js#L423)
 
 Read a YAML file, parse its contents, return an object.
 
@@ -149,7 +143,7 @@ Read a YAML file, parse its contents, return an object.
 * `options` **{Object}**
 * `returns` **{Object}**
 
-### [.write](index.js#L460)
+### [.write](index.js#L446)
 
 Write a file.
 
@@ -159,7 +153,7 @@ Write a file.
 * `contents` **{String|Buffer}**
 * `options` **{Object}**
 
-### [.copy](index.js#L497)
+### [.copy](index.js#L483)
 
 Read a file, optionally processing its content, then
 write the output. Or read a directory, recursively
@@ -173,7 +167,7 @@ writing output.
 * `options` **{Object}**
 * `returns` **{String}**
 
-### [._copy](index.js#L521)
+### [._copy](index.js#L507)
 
 Read a file, optionally processing its content, then write the output.
 
@@ -183,7 +177,7 @@ Read a file, optionally processing its content, then write the output.
 * `destpath` **{String}**
 * `options` **{Object}**
 
-### [.delete](index.js#L558)
+### [.delete](index.js#L544)
 
 Delete folders and files recursively
 
@@ -192,50 +186,50 @@ Delete folders and files recursively
 * `filepath` **{String}**: The file path to delete.
 * `options` **{Object}**
 
-### [.exists](index.js#L608)
+### [.exists](index.js#L593)
 
 Returns true if the given file path exists.
 
 * `returns` **{Boolean}**
 
-### [.isLink](index.js#L620)
+### [.isLink](index.js#L605)
 
 Returns true if the given file is a symbolic link.
 
 * `returns` **{Boolean}**
 
-### [.isDir](index.js#L632)
+### [.isDir](index.js#L617)
 
 Returns true if the given path is a directory.
 
 * `returns` **{Boolean}**
 
-### [.isFile](index.js#L644)
+### [.isFile](index.js#L629)
 
 Returns true if the given path is a file.
 
 * `returns` **{Boolean}**
 
-### [.isPathAbsolute](index.js#L656)
+### [.isPathAbsolute](index.js#L641)
 
 Returns true if the given file path absolute.
 
 * `returns` **{Boolean}**
 
-### [.arePathsEquivalent](index.js#L668)
+### [.arePathsEquivalent](index.js#L653)
 
 Returns true if all of specified paths refer to the same path.
 
 * `returns` **{Boolean}**
 
-### [.doesPathContain](index.js#L684)
+### [.doesPathContain](index.js#L669)
 
 Returns true if descendant path(s) are contained within ancestor path.
 Note: does not test if paths actually exist.
 
 * `returns` **{Boolean}**
 
-### [.isPathCwd](index.js#L702)
+### [.isPathCwd](index.js#L687)
 
 Returns true if a filepath is the CWD.
 
@@ -244,7 +238,7 @@ Returns true if a filepath is the CWD.
 * `filepath` **{String}**: A filepath may be passed as a single argument or as a list of path segments.
 * `returns` **{Boolean}**
 
-### [.isPathInCwd](index.js#L719)
+### [.isPathInCwd](index.js#L704)
 
 Returns true if a filepath is contained within the given CWD.
 
@@ -270,10 +264,10 @@ _(loosely in this order...)_
 **Next:**
 
 * [ ] replace core `grunt.file` internal module with `grunt-legacy-file`
-* [ ] remove any dependencies that are no longer needed from grunt.
+* [x] remove any dependencies that are no longer needed from grunt.
 * [ ] enable travis
-* [ ] add travis badge
-* [ ] Add the event to the changelogs of both libraries
+* [x] add travis badge
+* [x] Add the event to the changelogs of both libraries
 
 ## Related projects
 
@@ -301,6 +295,12 @@ Pull requests and stars are always welcome. For bugs and feature requests, [plea
 + [github/cowboy](https://github.com/cowboy)
 * [twitter/cowboy](http://twitter.com/cowboy)
 
+## Release history
+
+**DATE**       **VERSION**   **CHANGES**
+
+* 2015-05-04   v0.1.0        first commit
+
 ## License
 
 Copyright © 2015 "Cowboy" Ben Alman
@@ -308,6 +308,6 @@ Released under the MIT license.
 
 ***
 
-_This file was generated by [verb-cli](https://github.com/assemble/verb-cli) on May 22, 2015._
+_This file was generated by [verb-cli](https://github.com/assemble/verb-cli) on June 05, 2015._
 
 <!-- deps: verb -->
